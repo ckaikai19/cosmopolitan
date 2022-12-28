@@ -1,5 +1,5 @@
 import React from "react";
-import Cosmo from "./Brokerage/img/cosmo.png";
+import Cosmo from "./Brokerage/img/black.png";
 import { Link } from "react-router-dom";
 
 

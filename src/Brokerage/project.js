@@ -173,11 +173,15 @@ function Project() {
             </button>
           </Link>
         </div>
-        <div className='i3hfeoihfoiefho'>
+        <div className="i3hfeoihfoiefho">
           <div className="view-project-body orgjrtopjgrpogjrpojrpojrtop">
             <div className="iojuioijoefwijo mr-5 mt-5 bg-white border border-gray-200 rounded-lg shadow-md dark:bg-gray-800 dark:border-gray-700">
               <a href="#">
-                <img className="w-full rounded-t-lg" src={Cosmo} alt="" />
+                <img
+                  className="w-full erreergerggr rounded-t-lg"
+                  src={Cosmo}
+                  alt=""
+                />
               </a>
               <div className="p-5">
                 <a href="#">
@@ -211,7 +215,11 @@ function Project() {
             </div>
             <div className="iojuioijoefwijo mr-5 mt-5 bg-white border border-gray-200 rounded-lg shadow-md dark:bg-gray-800 dark:border-gray-700">
               <a href="#">
-                <img className="w-full rounded-t-lg" src={Cosmo} alt="" />
+                <img
+                  className="w-full erreergerggr rounded-t-lg"
+                  src={Cosmo}
+                  alt=""
+                />
               </a>
               <div className="p-5">
                 <a href="#">
@@ -245,7 +253,11 @@ function Project() {
             </div>
             <div className="iojuioijoefwijo mr-5 mt-5 bg-white border border-gray-200 rounded-lg shadow-md dark:bg-gray-800 dark:border-gray-700">
               <a href="#">
-                <img className="w-full rounded-t-lg" src={Cosmo} alt="" />
+                <img
+                  className="w-full erreergerggr rounded-t-lg"
+                  src={Cosmo}
+                  alt=""
+                />
               </a>
               <div className="p-5">
                 <a href="#">
@@ -279,7 +291,11 @@ function Project() {
             </div>
             <div className="iojuioijoefwijo mr-5 mt-5 bg-white border border-gray-200 rounded-lg shadow-md dark:bg-gray-800 dark:border-gray-700">
               <a href="#">
-                <img className="w-full rounded-t-lg" src={Cosmo} alt="" />
+                <img
+                  className="w-full erreergerggr rounded-t-lg"
+                  src={Cosmo}
+                  alt=""
+                />
               </a>
               <div className="p-5">
                 <a href="#">
@@ -313,7 +329,11 @@ function Project() {
             </div>
             <div className="iojuioijoefwijo mr-5 mt-5 bg-white border border-gray-200 rounded-lg shadow-md dark:bg-gray-800 dark:border-gray-700">
               <a href="#">
-                <img className="w-full rounded-t-lg" src={Cosmo} alt="" />
+                <img
+                  className="w-full erreergerggr rounded-t-lg"
+                  src={Cosmo}
+                  alt=""
+                />
               </a>
               <div className="p-5">
                 <a href="#">
@@ -347,7 +367,11 @@ function Project() {
             </div>
             <div className="iojuioijoefwijo mr-5 mt-5 bg-white border border-gray-200 rounded-lg shadow-md dark:bg-gray-800 dark:border-gray-700">
               <a href="#">
-                <img className="w-full rounded-t-lg" src={Cosmo} alt="" />
+                <img
+                  className="w-full erreergerggr rounded-t-lg"
+                  src={Cosmo}
+                  alt=""
+                />
               </a>
               <div className="p-5">
                 <a href="#">
@@ -381,7 +405,11 @@ function Project() {
             </div>
             <div className="iojuioijoefwijo mr-5 mt-5 bg-white border border-gray-200 rounded-lg shadow-md dark:bg-gray-800 dark:border-gray-700">
               <a href="#">
-                <img className="w-full rounded-t-lg" src={Cosmo} alt="" />
+                <img
+                  className="w-full erreergerggr rounded-t-lg"
+                  src={Cosmo}
+                  alt=""
+                />
               </a>
               <div className="p-5">
                 <a href="#">
@@ -415,7 +443,11 @@ function Project() {
             </div>
             <div className="iojuioijoefwijo mr-5 mt-5 bg-white border border-gray-200 rounded-lg shadow-md dark:bg-gray-800 dark:border-gray-700">
               <a href="#">
-                <img className="w-full rounded-t-lg" src={Cosmo} alt="" />
+                <img
+                  className="w-full erreergerggr rounded-t-lg"
+                  src={Cosmo}
+                  alt=""
+                />
               </a>
               <div className="p-5">
                 <a href="#">
@@ -449,7 +481,11 @@ function Project() {
             </div>
             <div className="iojuioijoefwijo mr-5 mt-5 bg-white border border-gray-200 rounded-lg shadow-md dark:bg-gray-800 dark:border-gray-700">
               <a href="#">
-                <img className="w-full rounded-t-lg" src={Cosmo} alt="" />
+                <img
+                  className="w-full erreergerggr rounded-t-lg"
+                  src={Cosmo}
+                  alt=""
+                />
               </a>
               <div className="p-5">
                 <a href="#">
