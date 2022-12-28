@@ -1,18 +1,28 @@
 .view-project-container {
     /* border: 1px solid green; */
     margin-left: 300px;
-        margin-top: 28px;
+    margin-top: 28px;
 }
 
-.iojuioijoefwijo{
+.iojuioijoefwijo {
     width: 249px;
 }
-.wefwefwefew{
+
+.wefwefwefew {
     /* border: 1px solid; */
     max-height: 50px;
     text-overflow: ellipsis;
     /* white-space: nowrap; */
     overflow: hidden;
+}
+
+.i3hfeoihfoiefho {
+    display: flex;
+    justify-content: center;
+}
+
+.orgjrtopjgrpogjrpojrpojrtop {
+    width: 1348px;
 }
 
 .view-project-head-gduiuewfguewifgeif {
@@ -44,8 +54,8 @@
 
 .view-project-body {
     display: flex;
-        margin-top: 10px;
-        flex-wrap: wrap;
+    margin-top: 10px;
+    flex-wrap: wrap;
 
 }
 
@@ -144,8 +154,8 @@
 }
 
 
-.vsdfvdfvdf{
-overflow: scroll;
+.vsdfvdfvdf {
+    overflow: scroll;
     max-height: 73vh;
 }
 
@@ -155,9 +165,9 @@ overflow: scroll;
 
 .project-view-close {
     display: flex;
-        position: relative;
-        justify-content: flex-end;
-        height: 0px;
+    position: relative;
+    justify-content: flex-end;
+    height: 0px;
 }
 
 .project-popup-view-close {
@@ -169,7 +179,7 @@ overflow: scroll;
 }
 
 
-.ohfoiwfhweoif{
+.ohfoiwfhweoif {
     width: 100%;
 }
 
@@ -181,21 +191,20 @@ overflow: scroll;
     padding-left: 16px;
 }
 
-.project-view-pop-cont{
-/* border: 3px solid green; */
+.project-view-pop-cont {
+    /* border: 3px solid green; */
     display: flex;
 }
 
-.pop-view-image{
+.pop-view-image {
     width: 245px;
-        height: 310px;
-        background: grey;
+    height: 310px;
+    background: grey;
 }
 
 
-.pop-view-dets{
+.pop-view-dets {}
 
-}
 @media screen and (max-width: 800px) {
     .view-project-container {
         margin-left: 100px;
