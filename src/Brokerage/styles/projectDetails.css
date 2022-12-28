@@ -1,0 +1,25 @@
+.project-details-contststs {
+    margin-top: 27px;
+    margin-right: 10px;
+    justify-content: space-evenly;
+    display: flex;
+    flex-wrap: wrap;
+
+}
+
+.project-details-left-shssdd {
+    /* border: 1px solid salmon; */
+    width: 100%;
+}
+
+.project-details-right-shssdd {
+    /* border: 1px solid yellow; */
+
+    width: 100%;
+}
+
+.oiejwoeiep {
+    font-size: 26px;
+    cursor: pointer;
+    color: white;
+}
