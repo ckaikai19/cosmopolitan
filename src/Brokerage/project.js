@@ -37,7 +37,7 @@ function Project() {
                     }
                   }}
                   type="button"
-                  class="flex items-center p-2 w-full text-base font-normal text-gray-900 rounded-lg transition duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
+                  class="flex items-center p-2 w-full text-base font-normal text-gray-900 rounded-lg transition  bg-gray-700 duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
                   aria-controls="dropdown-example"
                   data-collapse-toggle="dropdown-example"
                 >
@@ -94,7 +94,7 @@ function Project() {
                     }
                   }}
                   type="button"
-                  class="flex items-center p-2 w-full text-base font-normal text-gray-900 rounded-lg transition duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
+                  class="flex items-center p-2 w-full bg-gray-700 text-base font-normal text-gray-900 rounded-lg transition duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
                   aria-controls="dropdown-example"
                   data-collapse-toggle="dropdown-example"
                 >
@@ -164,8 +164,13 @@ function Project() {
       <div className="view-project-container">
         <div className="view-project-head-gduiuewfguewifgeif">
           <h1 className="view-project-head-tiewewft">All Projects</h1>
-          <Link to={"/newuser"}>
-            <h1 className="view-project-head-butt">Add New</h1>
+          <Link to={"/newproject"}>
+            <button
+              type="button"
+              class="py-3 px-5 mr-8 text-base font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+            >
+              Add New +
+            </button>
           </Link>
         </div>
 
