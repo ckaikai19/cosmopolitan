@@ -164,7 +164,43 @@ function ProjectDetails() {
       <div className="view-project-container">
         <div className="view-project-head-gduiuewfguewifgeif">
           <h1 className="view-project-head-tiewewft">Project 1</h1>
-          {/* <h1 className="view-project-head-butt">Edit</h1> */}
+          <Popup
+            trigger={() => (
+              <button
+                type="button"
+                class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
+              >
+                Delete
+              </button>
+            )}
+            modal
+          >
+            {(close) => {
+              return (
+                <div class="rounded-lg bg-white p-8 shadow-2xl">
+                  <h2 class="text-lg font-bold">
+                    Are you sure you want to delete this Project?
+                  </h2>
+
+                  <div class="mt-8 flex items-center justify-end text-xs">
+                    <button
+                      type="button"
+                      class="rounded bg-green-50 px-4 py-2 font-medium text-green-600"
+                    >
+                      Yes, I'm sure
+                    </button>
+                    <button
+                      type="button"
+                      onClick={close}
+                      class="ml-2 rounded bg-gray-50 px-4 py-2 font-medium text-gray-600"
+                    >
+                      No, go back
+                    </button>
+                  </div>
+                </div>
+              );
+            }}
+          </Popup>
         </div>
 
         <div className="project-details-contststs">
@@ -394,6 +430,7 @@ function ProjectDetails() {
                           class="block w-full text-lg text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
                           id="large_size"
                           type="file"
+                          placeholder="Upload"
                         ></input>
                       ) : (
                         <dd className="mt-1 text-sm text-white sm:col-span-2 sm:mt-0">

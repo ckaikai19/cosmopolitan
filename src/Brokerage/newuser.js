@@ -123,7 +123,7 @@ function NewUser() {
                       to={"/allusers"}
                       class="flex items-center p-2 pl-11 w-full text-base font-normal text-gray-900 rounded-lg transition duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
                     >
-                      All Users
+                      All Sub-Users
                     </Link>
                   </li>
                   <li>
@@ -131,7 +131,7 @@ function NewUser() {
                       to={"/newuser"}
                       class="flex items-center p-2 pl-11 w-full text-base font-normal text-gray-900 rounded-lg transition duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
                     >
-                      Create A User
+                      Create A Sub-User
                     </Link>
                   </li>
                 </ul>
@@ -158,7 +158,7 @@ function NewUser() {
       </div>
       <div className="view-project-container">
         <div className="view-project-head-gduiuewfguewifgeif">
-          <h1 className="view-project-head-tiewewft">User Page</h1>
+          <h1 className="view-project-head-tiewewft">Sub-User</h1>
           {/* <h1 className="view-project-head-butt">Edit</h1> */}
         </div>
 
@@ -169,10 +169,10 @@ function NewUser() {
                 <div className="px-4 shadow flex justify-between bg-gray-800 py-5 rounded sm:px-6">
                   <div>
                     <h3 className="text-lg font-medium leading-6 text-white">
-                      Create a new user
+                      Create a new sub-user
                     </h3>
                     <p className="mt-1 max-w-2xl text-sm text-white opacity-70">
-                      The user's details and documentation
+                      The sub-user's details and documentation
                     </p>
                   </div>
                   <div>
@@ -181,7 +181,7 @@ function NewUser() {
                         type="button"
                         class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
                       >
-                        Create User
+                        Create Sub-User
                       </button>
                     </div>
                   </div>
