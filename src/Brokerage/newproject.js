@@ -1,21 +1,36 @@
 import React, { useState } from "react";
 import "./styles/projectDetails.css";
-import Cosmo from "./img/cosmo.png";
-import { PaperClipIcon } from "@heroicons/react/20/solid";
 import { HiUserAdd } from "react-icons/hi";
-import { FaTrashAlt } from "react-icons/fa";
 import Popup from "reactjs-popup";
-import { Link } from "react-router-dom";
-
+import { Link, useNavigate } from "react-router-dom";
+import { UserAuth } from "./AuthContextProvider";
+import { toast } from "react-toastify";
 import Logo from "./img/logo.png";
 import { BsHouseDoorFill } from "react-icons/bs";
 import { FaRegUserCircle } from "react-icons/fa";
 
 function NewProject() {
+  const [products, setProjects] = useState(true);
+  const [users, setUsers] = useState(true);
+  const navigate = useNavigate();
+  const { logout } = UserAuth();
 
-     const [products, setProjects] = useState(true);
-     const [users, setUsers] = useState(true);
-
+  async function logoutFunc() {
+    try {
+      await logout();
+      toast.info("logged Out", {
+        position: "top-right",
+        autoClose: 4581,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
+      navigate("/");
+    } catch (err) {}
+  }
   return (
     <div className="main-container">
       <div id="bar" class="sidebarwefgtwefew">
@@ -35,7 +50,7 @@ function NewProject() {
                     }
                   }}
                   type="button"
-                  class="flex bg-gray-700 items-center p-2 w-full text-base font-normal text-gray-900 rounded-lg transition duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
+                  class="flex items-center p-2 w-full text-base font-normal text-gray-900 rounded-lg transition  bg-gray-700 duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
                   aria-controls="dropdown-example"
                   data-collapse-toggle="dropdown-example"
                 >
@@ -92,7 +107,7 @@ function NewProject() {
                     }
                   }}
                   type="button"
-                  class="flex bg-gray-700 items-center p-2 w-full text-base font-normal text-gray-900 rounded-lg transition duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
+                  class="flex items-center p-2 w-full bg-gray-700 text-base font-normal text-gray-900 rounded-lg transition duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
                   aria-controls="dropdown-example"
                   data-collapse-toggle="dropdown-example"
                 >
@@ -145,14 +160,15 @@ function NewProject() {
             <ul className="w-full space-y-2 flex items-center justify-between bg-gray-800">
               <div className="flex justify-center mt-5 mb-4 w-full">
                 <div className="relative ">
-                  <Link to={"/"}>
-                    <button
-                      type="button"
-                      class="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
-                    >
-                      Log out
-                    </button>
-                  </Link>
+                  {/* <Link to={"/"}> */}
+                  <button
+                    type="button"
+                    onClick={() => logoutFunc()}
+                    class="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
+                  >
+                    Log out
+                  </button>
+                  {/* </Link> */}
                 </div>
               </div>
             </ul>

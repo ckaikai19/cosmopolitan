@@ -1,66 +1,43 @@
 import React, { useState } from "react";
 import Cosmo from "./Brokerage/img/black.png";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Popup from "reactjs-popup";
-import {
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-} from "firebase/auth";
-import { auth } from "./firebase-config";
 import { toast } from "react-toastify";
+import { UserAuth } from "./Brokerage/AuthContextProvider";
 
 function Login() {
   const [email, setEmail] = useState(null);
   const [password, setPassword] = useState(null);
   const [newEmail, setNewEmail] = useState(null);
   const [newPassword, setNewPassword] = useState(null);
+  const navigate = useNavigate();
+  const { signup, login } = UserAuth();
 
-  async function signup() {
+  async function signupFunc() {
     try {
-      const user = await createUserWithEmailAndPassword(
-        auth,
-        newEmail,
-        newPassword
-      );
-      toast.success("User Created", {
-        position: "top-right",
-        autoClose: 4581,
-        hideProgressBar: true,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "dark",
-      });
+      await signup(newEmail, newPassword);
+      navigate("/project");
+
     } catch (err) {
-      toast.error("Invalid Input", {
-        position: "top-right",
-        autoClose: 4581,
-        hideProgressBar: true,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "dark",
-      });
+     toast.error(err.message, {
+       position: "top-right",
+       autoClose: 4581,
+       hideProgressBar: true,
+       closeOnClick: true,
+       pauseOnHover: true,
+       draggable: true,
+       progress: undefined,
+       theme: "dark",
+     });
     }
   }
 
-  async function login() {
+  async function loginFunc() {
     try {
-      const user = await signInWithEmailAndPassword(auth, email, password);
-      toast.success("Logged In Successfully", {
-        position: "top-right",
-        autoClose: 4581,
-        hideProgressBar: true,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "dark",
-      });
+      await login(email, password)
+      navigate("/project");
     } catch (err) {
-      toast.error("Invalid Login", {
+      toast.error(err.message, {
         position: "top-right",
         autoClose: 4581,
         hideProgressBar: true,
@@ -126,7 +103,7 @@ function Login() {
                   {/* <Link to={"/project"}> */}
                   <button
                     type="button"
-                    onClick={() => login()}
+                    onClick={() => loginFunc()}
                     class="text-white w-full p-4 bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 shadow-lg shadow-blue-500/50 dark:shadow-lg dark:shadow-blue-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2 "
                   >
                     Log in
@@ -157,7 +134,7 @@ function Login() {
                             <div>
                               <button
                                 type="button"
-                                onClick={() => signup()}
+                                onClick={() => signupFunc()}
                                 class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
                               >
                                 Create User
