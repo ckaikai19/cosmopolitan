@@ -20,17 +20,56 @@ body::-webkit-scrollbar {
     display: none;
 }
 
+time{
+    max-width: 208px;
+    /* overflow: hidden; */
+    overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+}
 .oeiwfhweiof {
     height: 237px;
 }
 
-.ewrfewrfewfwe{
+.ewrfewrfewfwe {
     border-radius: 8px;
 }
 
+.ewegergregrgrege{
+    /* border: 1px solid green; */
+    height: 100px;
+}
 
-.ieufrhefw8h8efwefhw{
+.ehfehiefhu {
+    width: 153px;
+    height: 63px;
+    margin-top: 25px;
+}
+
+.ieufrhefw8h8efwefhw {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+video {
+    width: 100%;
+    height: 100%;
+    object-fit: fill;
+
+}
+
+.ioewioeieoiooij{
+
+        height: 500px;
+        width: 100%;
         display: flex;
-            justify-content: center;
-            align-items: center;
+        justify-content: center;
+    
+}
+
+.fwehiefwiofewiowef{
+    width: 600px;
+    height: 300px;
 }

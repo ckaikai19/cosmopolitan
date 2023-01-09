@@ -22,7 +22,7 @@ function Brokerage() {
 
         <Route path="/project" element={<ProtectedRoute><Project /></ProtectedRoute>} />
         <Route path="/project/:id" element={<ProtectedRoute><ProjectDetails /></ProtectedRoute>} />
-        <Route path="/client/:id" element={<ProtectedRoute><Client /></ProtectedRoute>} />
+        <Route path="/project/:pid/client/:id" element={<ProtectedRoute><Client /></ProtectedRoute>} />
         <Route path="/newproject" element={<ProtectedRoute><NewProject /></ProtectedRoute>} />
         <Route path="/newuser" element={<ProtectedRoute><NewUser /></ProtectedRoute>} />
         <Route path="/allusers" element={<ProtectedRoute><AllUser /></ProtectedRoute>} />

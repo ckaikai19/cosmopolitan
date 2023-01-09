@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./styles/projectDetails.css";
 import Cosmo from "./img/cosmo.png";
 import { PaperClipIcon } from "@heroicons/react/20/solid";
 import { HiUserAdd } from "react-icons/hi";
 import { FaTrashAlt } from "react-icons/fa";
 import Popup from "reactjs-popup";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { UserAuth } from "./AuthContextProvider";
 import { toast } from "react-toastify";
 
@@ -13,30 +13,219 @@ import Logo from "./img/logo.png";
 import { BsHouseDoorFill } from "react-icons/bs";
 import { FaRegUserCircle } from "react-icons/fa";
 
+import {
+  doc,
+  getDoc,
+  collection,
+  getDocs,
+  deleteDoc,
+} from "firebase/firestore";
+import { db } from "../firebase-config";
+
+function DeletePop(docid) {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const { userId } = UserAuth();
+
+  async function deleteClient() {
+    const clientDoc = doc(
+      db,
+      `Users/${userId}/projects/${id}/subUsers`,
+      docid.docid
+    );
+
+    try {
+      await deleteDoc(clientDoc);
+      toast.info("Client Deleted", {
+        position: "top-right",
+        autoClose: 4581,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
+      navigate("/project");
+    } catch (err) {
+      console.log(err.message);
+    }
+  }
+
+  return (
+    <Popup
+      trigger={() => (
+        <FaTrashAlt className="text-2xl ml-2 relative text-white cursor-pointer hover:text-slate-500" />
+      )}
+      modal
+    >
+      {(close) => {
+        return (
+          <div class="rounded-lg bg-gray-700 p-8 shadow-2xl">
+            <h2 class="text-lg font-bold text-gray-200">
+              Are you sure you want to delete this client?
+            </h2>
+
+            <div class="mt-8 flex items-center justify-end text-xs">
+              <button
+                type="button"
+                onClick={() => deleteClient()}
+                class="rounded bg-gray-800 px-4 py-2 font-medium text-gray-200"
+              >
+                Yes, I'm sure
+              </button>
+              <button
+                type="button"
+                onClick={close}
+                class="ml-2 rounded bg-gray-800 px-4 py-2 font-medium text-gray-200"
+              >
+                No, go back
+              </button>
+            </div>
+          </div>
+        );
+      }}
+    </Popup>
+  );
+}
+
+function DeleteProject() {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const { userId } = UserAuth();
+
+  async function deleteClient() {
+    const clientDoc = doc(db, `Users/${userId}/projects`, id);
+
+    try {
+      await deleteDoc(clientDoc);
+      toast.info("Project Deleted", {
+        position: "top-right",
+        autoClose: 4581,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
+      navigate("/project");
+    } catch (err) {
+      console.log(err.message);
+    }
+  }
+
+  return (
+    <Popup
+      trigger={() => (
+        <button
+          type="button"
+          class="focus:outline-none text-white bg-gray-700 hover:bg-gray-800 focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-900"
+        >
+          Delete
+        </button>
+      )}
+      modal
+    >
+      {(close) => {
+        return (
+          <div class="rounded-lg bg-gray-700 p-8 shadow-2xl">
+            <h2 class="text-lg font-bold text-gray-200">
+              Are you sure you want to delete this project?
+            </h2>
+
+            <div class="mt-8 flex items-center justify-end text-xs">
+              <button
+                type="button"
+                onClick={() => deleteClient()}
+                class="rounded bg-gray-800 px-4 py-2 font-medium text-gray-200"
+              >
+                Yes, I'm sure
+              </button>
+              <button
+                type="button"
+                onClick={close}
+                class="ml-2 rounded bg-gray-800 px-4 py-2 font-medium text-gray-200"
+              >
+                No, go back
+              </button>
+            </div>
+          </div>
+        );
+      }}
+    </Popup>
+  );
+}
+
 function ProjectDetails() {
   const [editing, setEditing] = useState(false);
   const [products, setProjects] = useState(true);
   const [users, setUsers] = useState(true);
+  const [projectData, setProjectData] = useState(null);
 
-    const navigate = useNavigate();
-    const { logout } = UserAuth();
+  const navigate = useNavigate();
+  const { logout, userId } = UserAuth();
+  const { id } = useParams();
+  const projectDocumentRef = doc(db, `Users/${userId}/projects`, id);
+  const subUserCollectionRef = collection(
+    db,
+    `Users/${userId}/projects/${id}/subUsers`
+  );
+  const [builder, setBuilder] = useState(null);
+  const [agent, setAgent] = useState(null);
+  const [lawyer, setLawyer] = useState(null);
+  const [allClients, setAllClinets] = useState(null);
 
-    async function logoutFunc() {
-      try {
-        await logout();
-        toast.info("logged Out", {
-          position: "top-right",
-          autoClose: 4581,
-          hideProgressBar: true,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "dark",
-        });
-        navigate("/");
-      } catch (err) {}
+  async function logoutFunc() {
+    try {
+      await logout();
+      toast.info("logged Out", {
+        position: "top-right",
+        autoClose: 4581,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
+      navigate("/");
+    } catch (err) {}
+  }
+
+  useEffect(() => {
+    async function getData() {
+      const docSnap = await getDoc(projectDocumentRef);
+      setProjectData(docSnap.data());
     }
+
+    async function getSubUsers() {
+      const docsSnap = await getDocs(subUserCollectionRef);
+      let arr = [];
+      let clients = [];
+
+      docsSnap.forEach(function (doc) {
+        arr.push({ id: doc.id, ...doc.data() });
+      });
+
+      for (let i = 0; i < arr.length; i++) {
+        if (arr[i].role === "Builder") {
+          setBuilder(arr[i].name);
+        } else if (arr[i].role === "Agent") {
+          setAgent(arr[i].name);
+        } else if (arr[i].role === "Lawyer") {
+          setLawyer(arr[i].name);
+        } else if (arr[i].role === "Client") {
+          clients.push(arr[i]);
+        }
+      }
+
+      setAllClinets(clients);
+    }
+
+    getData();
+    getSubUsers();
+  }, []);
 
   return (
     <div className="main-container">
@@ -184,44 +373,9 @@ function ProjectDetails() {
       </div>
       <div className="view-project-container">
         <div className="view-project-head-gduiuewfguewifgeif">
-          <h1 className="view-project-head-tiewewft">Project 1</h1>
-          <Popup
-            trigger={() => (
-              <button
-                type="button"
-                class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
-              >
-                Delete
-              </button>
-            )}
-            modal
-          >
-            {(close) => {
-              return (
-                <div class="rounded-lg bg-white p-8 shadow-2xl">
-                  <h2 class="text-lg font-bold">
-                    Are you sure you want to delete this Project?
-                  </h2>
-
-                  <div class="mt-8 flex items-center justify-end text-xs">
-                    <button
-                      type="button"
-                      class="rounded bg-green-50 px-4 py-2 font-medium text-green-600"
-                    >
-                      Yes, I'm sure
-                    </button>
-                    <button
-                      type="button"
-                      onClick={close}
-                      class="ml-2 rounded bg-gray-50 px-4 py-2 font-medium text-gray-600"
-                    >
-                      No, go back
-                    </button>
-                  </div>
-                </div>
-              );
-            }}
-          </Popup>
+          <h1 className="view-project-head-tiewewft">
+            {projectData ? projectData.projectName : "Project"}
+          </h1>
         </div>
 
         <div className="project-details-contststs">
@@ -238,31 +392,7 @@ function ProjectDetails() {
                     </p>
                   </div>
                   <div>
-                    {editing ? (
-                      <div>
-                        <button
-                          type="button"
-                          class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-                        >
-                          Confirm Changes
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => setEditing(false)}
-                          class="text-gray-900   focus:ring-4 focus:ring-white font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-white  focus:outline-none "
-                        >
-                          Cancel
-                        </button>
-                      </div>
-                    ) : (
-                      <button
-                        type="button"
-                        onClick={() => setEditing(true)}
-                        class="text-white bg-lime-700 hover:bg-lime-700 focus:ring-4 focus:ring-lime-700 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-lime-700 dark:hover:bg-lime-700 focus:outline-none dark:focus:ring-lime-700"
-                      >
-                        Edit
-                      </button>
-                    )}
+                    <DeleteProject />
                   </div>
                 </div>
                 <div>
@@ -276,12 +406,14 @@ function ProjectDetails() {
                           <input
                             type="text"
                             id="default-input"
+                            value={projectData}
+                            // onChange= {}
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                           ></input>
                         </div>
                       ) : (
                         <dd className="mt-1 text-sm text-white sm:col-span-2 sm:mt-0">
-                          Testing Project 1
+                          {projectData ? projectData.projectName : "Add Name"}
                         </dd>
                       )}
                     </div>
@@ -293,7 +425,7 @@ function ProjectDetails() {
                       }
                     >
                       <dt className="text-sm font-medium text-white opacity-70">
-                        Project Images
+                        Project Image
                       </dt>
                       {editing ? (
                         <div>
@@ -338,46 +470,23 @@ function ProjectDetails() {
                         </div>
                       ) : (
                         <div className="mt-1 text-sm text-white sm:col-span-2 sm:mt-0 flex flex-wrap">
-                          <span class="rounded-full text-gray-500 bg-gray-200 font-semibold text-sm flex align-center mr-1 mt-1 cursor-pointer active:bg-gray-300 transition duration-300 ease w-max">
-                            <img
-                              class="rounded-full w-9 h-9 max-w-none"
-                              alt="A"
-                              src={Cosmo}
-                            />
-                            <span class="flex items-center px-3 py-2">
-                              Image 1
+                          <a
+                            href={
+                              projectData ? projectData.projectImageUrl : "#"
+                            }
+                          >
+                            <span class="rounded-full text-gray-500 bg-gray-200 font-semibold text-sm flex align-center mr-1 mt-1 cursor-pointer active:bg-gray-300 transition duration-300 ease w-max">
+                              <img
+                                class="rounded-full w-9 h-9 max-w-none"
+                                alt="A"
+                                src={Cosmo}
+                              />
+
+                              <span class="flex items-center px-3 py-2">
+                                View Project Image
+                              </span>
                             </span>
-                          </span>
-                          <span class="rounded-full text-gray-500 bg-gray-200 font-semibold text-sm flex align-center mr-1 mt-1 cursor-pointer active:bg-gray-300 transition duration-300 ease w-max">
-                            <img
-                              class="rounded-full w-9 h-9 max-w-none"
-                              alt="A"
-                              src={Cosmo}
-                            />
-                            <span class="flex items-center px-3 py-2">
-                              Image 2
-                            </span>
-                          </span>
-                          <span class="rounded-full text-gray-500 bg-gray-200 font-semibold text-sm flex align-center mr-1 mt-1 cursor-pointer active:bg-gray-300 transition duration-300 ease w-max">
-                            <img
-                              class="rounded-full w-9 h-9 max-w-none"
-                              alt="A"
-                              src={Cosmo}
-                            />
-                            <span class="flex items-center px-3 py-2">
-                              Image 3
-                            </span>
-                          </span>
-                          <span class="rounded-full text-gray-500 bg-gray-200 font-semibold text-sm flex align-center mr-1 mt-1 cursor-pointer active:bg-gray-300 transition duration-300 ease w-max">
-                            <img
-                              class="rounded-full w-9 h-9 max-w-none"
-                              alt="A"
-                              src={Cosmo}
-                            />
-                            <span class="flex items-center px-3 py-2">
-                              Image 4
-                            </span>
-                          </span>
+                          </a>
                         </div>
                       )}
                     </div>
@@ -398,7 +507,7 @@ function ProjectDetails() {
                         </select>
                       ) : (
                         <dd className="mt-1 text-sm text-white sm:col-span-2 sm:mt-0">
-                          Builder Company 1
+                          {builder ? builder : "No builder"}
                         </dd>
                       )}
                     </div>
@@ -416,7 +525,7 @@ function ProjectDetails() {
                         </>
                       ) : (
                         <dd className="mt-1 text-sm text-white sm:col-span-2 sm:mt-0">
-                          $620,000
+                          {projectData ? projectData.price : "$0.000"}
                         </dd>
                       )}
                     </div>
@@ -438,7 +547,7 @@ function ProjectDetails() {
                         </select>
                       ) : (
                         <dd className="mt-1 text-sm text-white sm:col-span-2 sm:mt-0">
-                          Residential
+                          {projectData ? projectData.propertyType : "No Type"}
                         </dd>
                       )}
                     </div>
@@ -466,31 +575,15 @@ function ProjectDetails() {
                                   aria-hidden="true"
                                 />
                                 <span className="ml-2 w-0 flex-1 truncate">
-                                  floor_plants_1.pdf
+                                  Floor Plan Document
                                 </span>
                               </div>
                               <div className="ml-4 flex-shrink-0">
                                 <a
-                                  href="#"
-                                  className="font-medium text-lime-500 hover:text-lime-900"
-                                >
-                                  Download
-                                </a>
-                              </div>
-                            </li>
-                            <li className="flex items-center justify-between py-3 pl-3 pr-4 text-sm">
-                              <div className="flex w-0 flex-1 items-center">
-                                <PaperClipIcon
-                                  className="h-5 w-5 flex-shrink-0 text-gray-400"
-                                  aria-hidden="true"
-                                />
-                                <span className="ml-2 w-0 flex-1 truncate">
-                                  floor_plans_2.pdf
-                                </span>
-                              </div>
-                              <div className="ml-4 flex-shrink-0">
-                                <a
-                                  href="#"
+                                  href={
+                                    projectData ? projectData.floorPlanUrl : "#"
+                                  }
+                                  download
                                   className="font-medium text-lime-500 hover:text-lime-900"
                                 >
                                   Download
@@ -525,31 +618,14 @@ function ProjectDetails() {
                                   aria-hidden="true"
                                 />
                                 <span className="ml-2 w-0 flex-1 truncate">
-                                  Legal_document_1.pdf
+                                  Legal Document
                                 </span>
                               </div>
                               <div className="ml-4 flex-shrink-0">
                                 <a
-                                  href="#"
-                                  className="font-medium text-lime-500 hover:text-lime-900"
-                                >
-                                  Download
-                                </a>
-                              </div>
-                            </li>
-                            <li className="flex items-center justify-between py-3 pl-3 pr-4 text-sm">
-                              <div className="flex w-0 flex-1 items-center">
-                                <PaperClipIcon
-                                  className="h-5 w-5 flex-shrink-0 text-gray-400"
-                                  aria-hidden="true"
-                                />
-                                <span className="ml-2 w-0 flex-1 truncate">
-                                  legal_document_1.pdf
-                                </span>
-                              </div>
-                              <div className="ml-4 flex-shrink-0">
-                                <a
-                                  href="#"
+                                  href={
+                                    projectData ? projectData.legalDocUrl : "#"
+                                  }
                                   className="font-medium text-lime-500 hover:text-lime-900"
                                 >
                                   Download
@@ -592,12 +668,16 @@ function ProjectDetails() {
                                   aria-hidden="true"
                                 />
                                 <span className="ml-2 w-0 flex-1 truncate">
-                                  Legal_document_1.pdf
+                                  Payment Document
                                 </span>
                               </div>
                               <div className="ml-4 flex-shrink-0">
                                 <a
-                                  href="#"
+                                  href={
+                                    projectData
+                                      ? projectData.paymentDocUrl
+                                      : "#"
+                                  }
                                   className="font-medium text-lime-500 hover:text-lime-900"
                                 >
                                   Download
@@ -623,7 +703,9 @@ function ProjectDetails() {
                         </div>
                       ) : (
                         <dd className="mt-1 text-sm text-white sm:col-span-2 sm:mt-0">
-                          1987 Morningview Lane, Steamboat Rock
+                          {projectData
+                            ? projectData.projectLocation
+                            : "No location added"}
                         </dd>
                       )}
                     </div>
@@ -651,31 +733,16 @@ function ProjectDetails() {
                                   aria-hidden="true"
                                 />
                                 <span className="ml-2 w-0 flex-1 truncate">
-                                  supporting_doucment_1.pdf
+                                  Supporting Document
                                 </span>
                               </div>
                               <div className="ml-4 flex-shrink-0">
                                 <a
-                                  href="#"
-                                  className="font-medium text-lime-500 hover:text-lime-900"
-                                >
-                                  Download
-                                </a>
-                              </div>
-                            </li>
-                            <li className="flex items-center justify-between py-3 pl-3 pr-4 text-sm">
-                              <div className="flex w-0 flex-1 items-center">
-                                <PaperClipIcon
-                                  className="h-5 w-5 flex-shrink-0 text-gray-400"
-                                  aria-hidden="true"
-                                />
-                                <span className="ml-2 w-0 flex-1 truncate">
-                                  supporting_document_2.pdf
-                                </span>
-                              </div>
-                              <div className="ml-4 flex-shrink-0">
-                                <a
-                                  href="#"
+                                  href={
+                                    projectData
+                                      ? projectData.supportingUrl
+                                      : "No Supporting Documents"
+                                  }
                                   className="font-medium text-lime-500 hover:text-lime-900"
                                 >
                                   Download
@@ -704,7 +771,7 @@ function ProjectDetails() {
                         </select>
                       ) : (
                         <dd className="mt-1 text-sm text-white sm:col-span-2 sm:mt-0">
-                          Agent 1
+                          {agent ? agent : "No Agent "}
                         </dd>
                       )}
                     </div>
@@ -716,54 +783,6 @@ function ProjectDetails() {
                   <h3 className="text-lg font-medium leading-6 text-white">
                     Clients
                   </h3>
-
-                  <Popup
-                    trigger={() => (
-                      <HiUserAdd className="text-2xl cursor-pointer hover:text-emerald-600  text-white" />
-                    )}
-                    modal
-                  >
-                    {(close) => {
-                      return (
-                        <div class="rounded-lg bg-white p-8 shadow-2xl">
-                          <div className="flex justify-center">
-                            <h2 class="text-lg font-bold">Add A Client</h2>
-                          </div>
-
-                          <div class="flex justify-center mt-5">
-                            <div class="mb-3 xl:w-96">
-                              <select
-                                class="form-select appearance-none block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding bg-no-repeat border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
-                                aria-label="Default select example"
-                                placeholder="Testing"
-                              >
-                                <option value="5">Select</option>
-                                <option value="1">Client 1</option>
-                                <option value="2">Client 2</option>
-                                <option value="3">Client 3</option>
-                              </select>
-                            </div>
-                          </div>
-
-                          <div class="mt-8 flex items-center justify-end text-xs">
-                            <button
-                              type="button"
-                              class="rounded bg-green-50 px-4 py-2 font-medium text-green-600"
-                            >
-                              Add
-                            </button>
-                            <button
-                              type="button"
-                              onClick={close}
-                              class="ml-2 rounded bg-gray-50 px-4 py-2 font-medium text-gray-600"
-                            >
-                              Go Back
-                            </button>
-                          </div>
-                        </div>
-                      );
-                    }}
-                  </Popup>
                 </div>
               </div>
               <div class="overflow-x-auto shadow-xl">
@@ -786,180 +805,40 @@ function ProjectDetails() {
                   </thead>
 
                   <tbody class="bg-gray-700 rounded">
-                    <tr>
-                      <td class=" whitespace-nowrap px-4 py-2 font-medium text-white opacity-70">
-                        John Doe
-                      </td>
-                      <td class="whitespace-nowrap px-4 py-2 text-white">
-                        123 Parkway Drive
-                      </td>
-                      <td class="whitespace-nowrap px-4 py-2 text-white">
-                        <strong class="rounded bg-gray-800 px-3 py-1.5 text-xs font-medium text-white">
-                          Status 2
-                        </strong>
-                      </td>
-                      <td class="whitespace-nowrap px-4 py-2 text-white">
-                        <div className="flex">
-                          <Link to={"/client/1"}>
-                            <button
-                              type="button"
-                              class="inline-block px-4 py-1.5 bg-blue-600 text-white font-medium text-xs leading-tight rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out"
-                            >
-                              Details
-                            </button>
-                          </Link>
+                    {allClients
+                      ? allClients.map((client) => (
+                          <tr>
+                            <td class=" whitespace-nowrap px-4 py-2 font-medium text-white opacity-70">
+                              {client.name}
+                            </td>
+                            <td class="whitespace-nowrap px-4 py-2 text-white">
+                              {client.address}
+                            </td>
+                            <td class="whitespace-nowrap px-4 py-2 text-white">
+                              <strong class="rounded bg-gray-800 px-3 py-1.5 text-xs font-medium text-white">
+                                {client.status === "1" ? "Offer" : null}
+                                {client.status === "2" ? "Negotiation" : null}
+                                {client.status === "3" ? "Due Diligence" : null}
+                                {client.status === "4" ? "Closing" : null}
+                              </strong>
+                            </td>
+                            <td class="whitespace-nowrap px-4 py-2 text-white">
+                              <div className="flex">
+                                <Link to={`/project/${id}/client/${client.id}`}>
+                                  <button
+                                    type="button"
+                                    class="inline-block px-4 py-1.5 bg-blue-600 text-white font-medium text-xs leading-tight rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out"
+                                  >
+                                    Details
+                                  </button>
+                                </Link>
 
-                          <Popup
-                            trigger={() => (
-                              <FaTrashAlt className="text-2xl ml-2 relative text-white cursor-pointer hover:text-slate-500" />
-                            )}
-                            modal
-                          >
-                            {(close) => {
-                              return (
-                                <div class="rounded-lg bg-white p-8 shadow-2xl">
-                                  <h2 class="text-lg font-bold">
-                                    Are you sure you want to delete this client?
-                                  </h2>
-
-                                  <div class="mt-8 flex items-center justify-end text-xs">
-                                    <button
-                                      type="button"
-                                      class="rounded bg-green-50 px-4 py-2 font-medium text-green-600"
-                                    >
-                                      Yes, I'm sure
-                                    </button>
-                                    <button
-                                      type="button"
-                                      onClick={close}
-                                      class="ml-2 rounded bg-gray-50 px-4 py-2 font-medium text-gray-600"
-                                    >
-                                      No, go back
-                                    </button>
-                                  </div>
-                                </div>
-                              );
-                            }}
-                          </Popup>
-                        </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td class=" whitespace-nowrap px-4 py-2 font-medium text-white opacity-70">
-                        Mike Steven
-                      </td>
-                      <td class="whitespace-nowrap px-4 py-2 text-white">
-                        456 Parkway Drive
-                      </td>
-                      <td class="whitespace-nowrap px-4 py-2 text-white">
-                        <strong class="rounded bg-gray-800 px-3 py-1.5 text-xs font-medium text-white">
-                          Status 4
-                        </strong>
-                      </td>
-                      <td class="whitespace-nowrap px-4 py-2 text-white">
-                        <div className="flex">
-                          <Link to={"/client/1"}>
-                            <button
-                              type="button"
-                              class="inline-block px-4 py-1.5 bg-blue-600 text-white font-medium text-xs leading-tight rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out"
-                            >
-                              Details
-                            </button>
-                          </Link>
-
-                          <Popup
-                            trigger={() => (
-                              <FaTrashAlt className="text-2xl ml-2 relative text-white cursor-pointer hover:text-slate-500" />
-                            )}
-                            modal
-                          >
-                            {(close) => {
-                              return (
-                                <div class="rounded-lg bg-white p-8 shadow-2xl">
-                                  <h2 class="text-lg font-bold">
-                                    Are you sure you want to delete this client?
-                                  </h2>
-
-                                  <div class="mt-8 flex items-center justify-end text-xs">
-                                    <button
-                                      type="button"
-                                      class="rounded bg-green-50 px-4 py-2 font-medium text-green-600"
-                                    >
-                                      Yes, I'm sure
-                                    </button>
-                                    <button
-                                      type="button"
-                                      onClick={close}
-                                      class="ml-2 rounded bg-gray-50 px-4 py-2 font-medium text-gray-600"
-                                    >
-                                      No, go back
-                                    </button>
-                                  </div>
-                                </div>
-                              );
-                            }}
-                          </Popup>
-                        </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td class=" whitespace-nowrap px-4 py-2 font-medium text-white opacity-70">
-                        Samantha Cole
-                      </td>
-                      <td class="whitespace-nowrap px-4 py-2 text-white">
-                        789 Parkway Drive
-                      </td>
-                      <td class="whitespace-nowrap px-4 py-2 text-white">
-                        <strong class="rounded bg-gray-800 px-3 py-1.5 text-xs font-medium text-white">
-                          Status 3
-                        </strong>
-                      </td>
-                      <td class="whitespace-nowrap px-4 py-2 text-white">
-                        <div className="flex">
-                          <Link to={"/client/1"}>
-                            <button
-                              type="button"
-                              class="inline-block px-4 py-1.5 bg-blue-600 text-white font-medium text-xs leading-tight rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out"
-                            >
-                              Details
-                            </button>
-                          </Link>
-
-                          <Popup
-                            trigger={() => (
-                              <FaTrashAlt className="text-2xl ml-2 relative text-white cursor-pointer hover:text-slate-500" />
-                            )}
-                            modal
-                          >
-                            {(close) => {
-                              return (
-                                <div class="rounded-lg bg-white p-8 shadow-2xl">
-                                  <h2 class="text-lg font-bold">
-                                    Are you sure you want to delete this client?
-                                  </h2>
-
-                                  <div class="mt-8 flex items-center justify-end text-xs">
-                                    <button
-                                      type="button"
-                                      class="rounded bg-green-50 px-4 py-2 font-medium text-green-600"
-                                    >
-                                      Yes, I'm sure
-                                    </button>
-                                    <button
-                                      type="button"
-                                      onClick={close}
-                                      class="ml-2 rounded bg-gray-50 px-4 py-2 font-medium text-gray-600"
-                                    >
-                                      No, go back
-                                    </button>
-                                  </div>
-                                </div>
-                              );
-                            }}
-                          </Popup>
-                        </div>
-                      </td>
-                    </tr>
+                                <DeletePop docid={client.id} />
+                              </div>
+                            </td>
+                          </tr>
+                        ))
+                      : null}
                   </tbody>
                 </table>
               </div>
@@ -982,23 +861,12 @@ function ProjectDetails() {
                             id="message"
                             rows="4"
                             class="block h-150px p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                            placeholder="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-                enim ad minim veniam, quis nostrud exercitation ullamco laboris
-                nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
-                in reprehenderit in voluptate velit esse cillum dolore eu fugiat
-                nulla pariatur"
+                            placeholder="Enter a Comment"
                           ></textarea>
                         </div>
                       ) : (
                         <dd className="mt-1 text-sm text-white sm:col-span-2 sm:mt-0">
-                          Lorem ipsum dolor sit amet, consectetur adipiscing
-                          elit, sed do eiusmod tempor incididunt ut labore et
-                          dolore magna aliqua. Ut enim ad minim veniam, quis
-                          nostrud exercitation ullamco laboris nisi ut aliquip
-                          ex ea commodo consequat. Duis aute irure dolor in
-                          reprehenderit in voluptate velit esse cillum dolore eu
-                          fugiat nulla pariatur.
+                          {projectData ? projectData.comments : "No Comments"}
                         </dd>
                       )}
                     </div>
@@ -1012,4 +880,5 @@ function ProjectDetails() {
     </div>
   );
 }
+
 export default ProjectDetails;

@@ -9,11 +9,100 @@ import Logo from "./img/logo.png";
 import { BsHouseDoorFill } from "react-icons/bs";
 import { FaRegUserCircle } from "react-icons/fa";
 
+import { db, storage } from "../firebase-config";
+import { collection, addDoc } from "firebase/firestore";
+
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+
 function NewProject() {
   const [products, setProjects] = useState(true);
   const [users, setUsers] = useState(true);
   const navigate = useNavigate();
-  const { logout } = UserAuth();
+  const { logout, userId } = UserAuth();
+  const projectCollectionRef = collection(db, `Users/${userId}/projects`);
+  const [projectName, setProjectName] = useState(null);
+  const [price, setPrice] = useState(null);
+  const [propertyType, setPropertyType] = useState(null);
+  const [projectLocation, setProjectLocation] = useState(null);
+  const [comments, setComments] = useState(null);
+  const [projectImageUrl, setProjectImageUrl] = useState(null);
+  const [floorPlanUrl, setfloorPlanUrl] = useState(null);
+  const [legalDocUrl, setLegalDocUrl] = useState(null);
+  const [paymentDocUrl, setPaymentDocUrl] = useState(null);
+  const [supportingUrl, setSupportingUrl] = useState(null);
+
+  function uploadFile(file, type) {
+    const imageRef = ref(storage, `projects/${file.id}`);
+    uploadBytes(imageRef, file).then((snapshot) => {
+      getDownloadURL(snapshot.ref).then((url) => {
+        if (type === "image") {
+          setProjectImageUrl(url);
+        } else if (type === "floorplan") {
+          setfloorPlanUrl(url);
+        } else if (type === "legaldoc") {
+          setLegalDocUrl(url);
+        } else if (type === "payment") {
+          setPaymentDocUrl(url);
+        } else if (type === "supporting") {
+          setSupportingUrl(url);
+        }
+      });
+    });
+  }
+
+  async function AddProject() {
+    if (
+      projectName &&
+      price &&
+      propertyType &&
+      projectLocation &&
+      comments &&
+      projectImageUrl &&
+      floorPlanUrl &&
+      legalDocUrl &&
+      paymentDocUrl &&
+      supportingUrl
+    ) {
+      try {
+        await addDoc(projectCollectionRef, {
+          projectName,
+          price,
+          propertyType,
+          projectLocation,
+          comments,
+          projectImageUrl,
+          floorPlanUrl,
+          legalDocUrl,
+          paymentDocUrl,
+          supportingUrl,
+        });
+        toast.info("Project Added", {
+          position: "top-right",
+          autoClose: 4581,
+          hideProgressBar: true,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        });
+        navigate("/project");
+      } catch (err) {
+        console.log(err.message);
+      }
+    } else {
+      toast.error("Must fill all inputs", {
+        position: "top-right",
+        autoClose: 4581,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
+    }
+  }
 
   async function logoutFunc() {
     try {
@@ -31,6 +120,7 @@ function NewProject() {
       navigate("/");
     } catch (err) {}
   }
+
   return (
     <div className="main-container">
       <div id="bar" class="sidebarwefgtwefew">
@@ -177,7 +267,7 @@ function NewProject() {
       </div>
       <div className="view-project-container">
         <div className="view-project-head-gduiuewfguewifgeif">
-          <h1 className="view-project-head-tiewewft">Project 1</h1>
+          <h1 className="view-project-head-tiewewft">New Project</h1>
           {/* <h1 className="view-project-head-butt">Edit</h1> */}
         </div>
 
@@ -185,7 +275,7 @@ function NewProject() {
           <div className="coiowejiewje">
             <div className="project-details-left-shssdd">
               <div className="bg-gray-800 shadow-xl  shadow sm:rounded-lg">
-                <div className="px-4 shadow flex justify-between bg-gray-800 py-5 rounded sm:px-6">
+                <div className="px-4 bg-gray-700 shadow flex justify-between bg-gray-800 py-5 rounded sm:px-6">
                   <div>
                     <h3 className="text-lg font-medium leading-6 text-white">
                       Create a new project
@@ -198,6 +288,7 @@ function NewProject() {
                     <div>
                       <button
                         type="button"
+                        onClick={() => AddProject()}
                         class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
                       >
                         Create Project
@@ -207,78 +298,35 @@ function NewProject() {
                 </div>
                 <div>
                   <dl>
-                    <div className=" bg-gray-700 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                    <div className="  px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                       <dt className="text-sm font-medium text-white opacity-70">
                         Project Name
                       </dt>
                       <div>
                         <input
                           type="text"
+                          onChange={(event) =>
+                            setProjectName(event.target.value)
+                          }
                           id="default-input"
                           class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                         ></input>
                       </div>
                     </div>
-                    <div className="px-4 py-5 sm:grid sm:grid-cols-1 sm:gap-4 sm:px-6">
+                    <div className="bg-gray-700 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                       <dt className="text-sm font-medium text-white opacity-70">
-                        Project Images
+                        Project Image
                       </dt>
-                      <div>
-                        <div class="flex items-center justify-center w-full">
-                          <label
-                            for="dropzone-file"
-                            class="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600"
-                          >
-                            <div class="flex flex-col items-center justify-center pt-5 pb-6">
-                              <svg
-                                aria-hidden="true"
-                                class="w-10 h-10 mb-3 text-gray-400"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                                xmlns="http://www.w3.org/2000/svg"
-                              >
-                                <path
-                                  stroke-linecap="round"
-                                  stroke-linejoin="round"
-                                  stroke-width="2"
-                                  d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-                                ></path>
-                              </svg>
-                              <p class="mb-2 text-sm text-gray-500 dark:text-gray-400">
-                                <span class="font-semibold">
-                                  Click to upload
-                                </span>{" "}
-                                or drag and drop
-                              </p>
-                              <p class="text-xs text-gray-500 dark:text-gray-400">
-                                PDF, PNG, JPG or GIF (MAX. 800x400px)
-                              </p>
-                            </div>
-                            <input
-                              id="dropzone-file"
-                              type="file"
-                              class="hidden"
-                            />
-                          </label>
-                        </div>
-                      </div>
+                      <input
+                        id="dropzone-file"
+                        type="file"
+                        onChange={(event) =>
+                          uploadFile(event.target.files[0], "image")
+                        }
+                        class="block  text-lg text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
+                      />
                     </div>
-                    <div className="bg-gray-700  px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                      <dt className="text-sm font-medium text-white opacity-70">
-                        Assigned Builder
-                      </dt>
-                      <select
-                        id="default"
-                        class="bg-gray-50 border border-gray-300 text-gray-900 mb-6 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                      >
-                        <option selected>Select a Builder</option>
-                        <option value="US">Builder 1</option>
-                        <option value="CA">Builder 2</option>
-                        <option value="FR">Builder 3</option>
-                        <option value="DE">Builder 4</option>
-                      </select>
-                    </div>
+
                     <div className="px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                       <dt className="text-sm font-medium text-white opacity-70">
                         Property Price
@@ -286,6 +334,7 @@ function NewProject() {
                       <>
                         <input
                           type="number"
+                          onChange={(event) => setPrice(event.target.value)}
                           id="default-input"
                           class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                         ></input>
@@ -298,34 +347,44 @@ function NewProject() {
 
                       <select
                         id="default"
+                        value={propertyType}
+                        onChange={(event) =>
+                          setPropertyType(event.target.value)
+                        }
                         class="bg-gray-50 border border-gray-300 text-gray-900 mb-6 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                       >
                         <option selected>Select a Property Type</option>
-                        <option value="US">Property Type 1</option>
-                        <option value="CA">Property Type 2</option>
-                        <option value="FR">Property Type 3</option>
-                        <option value="DE">Property Type 4</option>
+                        <option value="Single-family home">Single-family homes</option>
+                        <option value="Condo">Condos</option>
+                        <option value="Townhome">Townhome</option>
+                        <option value="Commercial property">Commercial property</option>
                       </select>
                     </div>
                     <div className=" px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                       <dt className="text-sm font-medium text-white opacity-70">
-                        Floor Plans
+                        Floor Plan
                       </dt>
                       <input
                         class="block w-full text-lg text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
                         id="large_size"
                         type="file"
+                        onChange={(event) =>
+                          uploadFile(event.target.files[0], "floorplan")
+                        }
                       ></input>
                     </div>
                     <div className="bg-gray-700  px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                       <dt className="text-sm font-medium text-white opacity-70">
-                        Legal Documents
+                        Legal Document
                       </dt>
 
                       <input
                         class="block w-full text-lg text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
                         id="large_size"
                         type="file"
+                        onChange={(event) =>
+                          uploadFile(event.target.files[0], "legaldoc")
+                        }
                       ></input>
                     </div>
                   </dl>
@@ -338,13 +397,16 @@ function NewProject() {
                   <dl>
                     <div className=" px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                       <dt className="text-sm font-medium text-white opacity-70">
-                        Payment Documents
+                        Payment Document
                       </dt>
 
                       <input
                         class="block w-full text-lg text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
                         id="large_size"
                         type="file"
+                        onChange={(event) =>
+                          uploadFile(event.target.files[0], "payment")
+                        }
                       ></input>
                     </div>
                     <div className="bg-gray-700  px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
@@ -355,219 +417,30 @@ function NewProject() {
                         <input
                           type="text"
                           id="default-input"
+                          onChange={(event) =>
+                            setProjectLocation(event.target.value)
+                          }
                           class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                         ></input>
                       </div>
                     </div>
                     <div className=" px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                       <dt className="text-sm font-medium text-white opacity-70">
-                        Supporting Documents
+                        Supporting Document
                       </dt>
                       <input
                         class="block w-full text-lg text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
                         id="large_size"
                         type="file"
+                        onChange={(event) =>
+                          uploadFile(event.target.files[0], "supporting")
+                        }
                       ></input>
-                    </div>
-                    <div className=" bg-gray-700 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                      <dt className="text-sm font-medium text-white opacity-70">
-                        Assigend Agent
-                      </dt>
-                      <select
-                        id="default"
-                        class="bg-gray-50 border border-gray-300 text-gray-900 mb-6 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                      >
-                        <option selected>Select a Agent</option>
-                        <option value="US">Agent 1</option>
-                        <option value="CA">Agent 2</option>
-                        <option value="FR">Agent 3</option>
-                        <option value="DE">Agent 4</option>
-                      </select>
                     </div>
                   </dl>
                 </div>
               </div>
-              <div className="bg-gray-800 shadow-xl shadow-xl sm:rounded-lg">
-                <div className="px-4 flex justify-between py-5 mt-5 sm:px-6">
-                  <h3 className="text-lg font-medium leading-6 text-white">
-                    Clients
-                  </h3>
 
-                  <Popup
-                    trigger={() => (
-                      <HiUserAdd className="text-2xl cursor-pointer hover:text-emerald-600  text-white" />
-                    )}
-                    modal
-                  >
-                    {(close) => {
-                      return (
-                        <div class="rounded-lg bg-white p-8 shadow-2xl">
-                          <div className="flex justify-center">
-                            <h2 class="text-lg font-bold">Add A Client</h2>
-                          </div>
-
-                          <div class="flex justify-center mt-5">
-                            <div class="mb-3 xl:w-96">
-                              <select
-                                class="form-select appearance-none block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding bg-no-repeat border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
-                                aria-label="Default select example"
-                                placeholder="Testing"
-                              >
-                                <option value="5">Select</option>
-                                <option value="1">Client 1</option>
-                                <option value="2">Client 2</option>
-                                <option value="3">Client 3</option>
-                              </select>
-                            </div>
-                          </div>
-
-                          <div class="mt-8 flex items-center justify-end text-xs">
-                            <button
-                              type="button"
-                              class="rounded bg-green-50 px-4 py-2 font-medium text-green-600"
-                            >
-                              Add
-                            </button>
-                            <button
-                              type="button"
-                              onClick={close}
-                              class="ml-2 rounded bg-gray-50 px-4 py-2 font-medium text-gray-600"
-                            >
-                              Go Back
-                            </button>
-                          </div>
-                        </div>
-                      );
-                    }}
-                  </Popup>
-                </div>
-              </div>
-              <div class="overflow-x-auto shadow-xl">
-                <table class="min-w-full divide-y divide-gray-200 text-sm">
-                  <thead class="bg-gray-100">
-                    <tr>
-                      <th class="whitespace-nowrap px-4 py-2 text-left font-medium text-grey-800">
-                        Name
-                      </th>
-                      <th class="whitespace-nowrap px-4 py-2 text-left font-medium text-grey-800">
-                        Address
-                      </th>
-                      <th class="whitespace-nowrap px-4 py-2 text-left font-medium text-grey-800">
-                        Status
-                      </th>
-                      <th class="whitespace-nowrap px-4 py-2 text-left font-medium text-grey-800">
-                        Actions
-                      </th>
-                    </tr>
-                  </thead>
-
-                  <tbody class="bg-gray-700 rounded">
-                    {/* <tr>
-                    <td class=" whitespace-nowrap px-4 py-2 font-medium text-white opacity-70">
-                      John Doe
-                    </td>
-                    <td class="whitespace-nowrap px-4 py-2 text-white">
-                      123 Parkway Drive
-                    </td>
-                    <td class="whitespace-nowrap px-4 py-2 text-white">
-                      <strong class="rounded bg-gray-800 px-3 py-1.5 text-xs font-medium text-white">
-                        Partially Refunded
-                      </strong>
-                    </td>
-                    <td class="whitespace-nowrap px-4 py-2 text-white">
-                      <div className="flex">
-                        <button
-                          type="button"
-                          class="inline-block px-4 py-1.5 bg-blue-600 text-white font-medium text-xs leading-tight rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out"
-                        >
-                          Details
-                        </button>
-                        <Popup
-                          trigger={() => (
-                            <FaTrashAlt className="text-2xl ml-2 relative text-white cursor-pointer hover:text-slate-500" />
-                          )}
-                          modal
-                        >
-                          {(close) => {
-                            return (
-                              <div class="rounded-lg bg-white p-8 shadow-2xl">
-                                <h2 class="text-lg font-bold">
-                                  Are you sure you want to delete this client?
-                                </h2>
-
-                                <div class="mt-8 flex items-center justify-end text-xs">
-                                  <button
-                                    type="button"
-                                    class="rounded bg-green-50 px-4 py-2 font-medium text-green-600"
-                                  >
-                                    Yes, I'm sure
-                                  </button>
-                                  <button
-                                    type="button"
-                                    onClick={close}
-                                    class="ml-2 rounded bg-gray-50 px-4 py-2 font-medium text-gray-600"
-                                  >
-                                    No, go back
-                                  </button>
-                                </div>
-                              </div>
-                            );
-                          }}
-                        </Popup>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td class=" whitespace-nowrap px-4 py-2 font-medium text-white opacity-70">
-                      John Doe
-                    </td>
-                    <td class="whitespace-nowrap px-4 py-2 text-white">
-                      123 Parkway Drive
-                    </td>
-                    <td class="whitespace-nowrap px-4 py-2 text-white">
-                      <strong class="rounded bg-gray-800 px-3 py-1.5 text-xs font-medium text-white">
-                        Partially Refunded
-                      </strong>
-                    </td>
-                    <td class="whitespace-nowrap px-4 py-2 text-white">
-                      <div className="flex">
-                        <button
-                          type="button"
-                          class="inline-block px-4 py-1.5 bg-blue-600 text-white font-medium text-xs leading-tight rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out"
-                        >
-                          Details
-                        </button>
-                        <FaTrashAlt className="text-2xl ml-2 relative text-white cursor-pointer hover:text-slate-500" />
-                      </div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td class=" whitespace-nowrap px-4 py-2 font-medium text-white opacity-70">
-                      John Doe
-                    </td>
-                    <td class="whitespace-nowrap px-4 py-2 text-white">
-                      123 Parkway Drive
-                    </td>
-                    <td class="whitespace-nowrap px-4 py-2 text-white">
-                      <strong class="rounded bg-gray-800 px-3 py-1.5 text-xs font-medium text-white">
-                        Partially Refunded
-                      </strong>
-                    </td>
-                    <td class="whitespace-nowrap px-4 py-2 text-white">
-                      <div className="flex">
-                        <button
-                          type="button"
-                          class="inline-block px-4 py-1.5 bg-blue-600 text-white font-medium text-xs leading-tight rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out"
-                        >
-                          Details
-                        </button>
-                        <FaTrashAlt className="text-2xl ml-2 relative text-white cursor-pointer hover:text-slate-500" />
-                      </div>
-                    </td>
-                  </tr> */}
-                  </tbody>
-                </table>
-              </div>
               <div className="bg-gray-800 mt-8 mb-8 rounded shadow-xl shadow sm:rounded-lg">
                 <div>
                   <dl>
@@ -579,13 +452,9 @@ function NewProject() {
                         <textarea
                           id="message"
                           rows="4"
+                          onChange={(event) => setComments(event.target.value)}
                           class="block h-150px p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                          placeholder="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-                enim ad minim veniam, quis nostrud exercitation ullamco laboris
-                nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
-                in reprehenderit in voluptate velit esse cillum dolore eu fugiat
-                nulla pariatur"
+                          placeholder="Add any additional comments about the project"
                         ></textarea>
                       </div>
                     </div>

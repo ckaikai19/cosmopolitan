@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./styles/projectDetails.css";
 import { FaRegUserCircle } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
@@ -7,31 +7,138 @@ import { BsHouseDoorFill } from "react-icons/bs";
 import Popup from "reactjs-popup";
 import { UserAuth } from "./AuthContextProvider";
 import { toast } from "react-toastify";
+import {
+  doc,
+  getDoc,
+  collection,
+  getDocs,
+  deleteDoc,
+} from "firebase/firestore";
+import { db } from "../firebase-config";
 
+function DeletePop({userIID, assProject}) {
+  const navigate = useNavigate();
+  const { userId } = UserAuth();
 
+  async function deleteClient() {
+    const clientDoc = doc(
+      db,
+      `Users/${userId}/projects/${assProject}/subUsers`,
+      userIID
+    );
+
+    try {
+      await deleteDoc(clientDoc);
+      toast.info("Client Deleted", {
+        position: "top-right",
+        autoClose: 4581,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
+      navigate("/project");
+    } catch (err) {
+      console.log(err.message);
+    }
+  }
+
+  return (
+    <Popup
+      trigger={() => (
+        <button class="inline-block px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:relative">
+          Delete
+        </button>
+      )}
+      modal
+    >
+      {(close) => {
+        return (
+          <div class="rounded-lg bg-gray-700 p-8 shadow-2xl">
+            <h2 class="text-lg font-bold text-gray-200">
+              Are you sure you want to delete this client?
+            </h2>
+
+            <div class="mt-8 flex items-center justify-end text-xs">
+              <button
+                type="button"
+                onClick={() => deleteClient()}
+                class="rounded bg-gray-800 px-4 py-2 font-medium text-gray-200"
+              >
+                Yes, I'm sure
+              </button>
+              <button
+                type="button"
+                onClick={close}
+                class="ml-2 rounded bg-gray-800 px-4 py-2 font-medium text-gray-200"
+              >
+                No, go back
+              </button>
+            </div>
+          </div>
+        );
+      }}
+    </Popup>
+  );
+}
 
 function AllUser() {
   const [products, setProjects] = useState(true);
   const [users, setUsers] = useState(true);
-    const navigate = useNavigate();
-    const { logout } = UserAuth();
+  const navigate = useNavigate();
+  const { logout, userId } = UserAuth();
+  const projectDocumentsRef = collection(db, `Users/${userId}/projects`);
+  const [allUsers, setAllUsers] = useState([]);
 
-      async function logoutFunc() {
-        try {
-          await logout();
-          toast.info("logged Out", {
-            position: "top-right",
-            autoClose: 4581,
-            hideProgressBar: true,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "dark",
-          });
-          navigate("/");
-        } catch (err) {}
-      }
+  async function logoutFunc() {
+    try {
+      await logout();
+      toast.info("logged Out", {
+        position: "top-right",
+        autoClose: 4581,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
+      navigate("/");
+    } catch (err) {}
+  }
+
+  useEffect(() => {
+    async function getClients() {
+      let projectsArr = [];
+      let usersArr = [];
+      const projectSnap = await getDocs(projectDocumentsRef);
+
+      projectSnap.forEach(function (doc) {
+        projectsArr.push({ id: doc.id, ...doc.data() });
+      });
+
+      projectsArr.forEach(async function (project) {
+        const subUserCollectionRef = collection(
+          db,
+          `Users/${userId}/projects/${project.id}/subUsers`
+        );
+        const usersSnap = await getDocs(subUserCollectionRef);
+
+        usersSnap.forEach(function (doc) {
+          usersArr.push({ id: doc.id, ...doc.data() });
+        });
+
+        setAllUsers(usersArr);
+      });
+
+    }
+
+    getClients();
+  }, []);
+
+
   return (
     <div className="main-container">
       <div id="bar" class="sidebarwefgtwefew">
@@ -230,412 +337,32 @@ function AllUser() {
                     </tr>
                   </thead>
                   <tbody>
-                    <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                      <th
-                        scope="row"
-                        className="flex items-center py-4 px-6 text-gray-900 whitespace-nowrap dark:text-white"
-                      >
-                        <FaRegUserCircle className="w-10 text-gray-200 h-10 rounded-full" />
-                        <div className="pl-3">
-                          <div className="text-base font-semibold">
-                            Neil Sims
-                          </div>
-                        </div>
-                      </th>
-                      <td className="py-4 px-6">neilS123@gmail.com</td>
-                      <td className="py-4 px-6">
-                        123 Parkway Drive, Ontairo N5A 8A8
-                      </td>
-                      <td className="py-4 px-6">Agent</td>
-                      <td className="py-4 px-6">Project 1</td>
-
-                      <td className="py-4 px-6">
-                        <span class="inline-flex -space-x-px overflow-hidden rounded-md border bg-white shadow-sm">
-                          <Popup
-                            trigger={() => (
-                              <button class="inline-block px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:relative">
-                                Delete
-                              </button>
-                            )}
-                            modal
-                          >
-                            {(close) => {
-                              return (
-                                <div class="rounded-lg bg-white p-8 shadow-2xl">
-                                  <h2 class="text-lg font-bold">
-                                    Are you sure you want to delete this client?
-                                  </h2>
-
-                                  <div class="mt-8 flex items-center justify-end text-xs">
-                                    <button
-                                      type="button"
-                                      class="rounded bg-green-50 px-4 py-2 font-medium text-green-600"
-                                    >
-                                      Yes, I'm sure
-                                    </button>
-                                    <button
-                                      type="button"
-                                      onClick={close}
-                                      class="ml-2 rounded bg-gray-50 px-4 py-2 font-medium text-gray-600"
-                                    >
-                                      No, go back
-                                    </button>
-                                  </div>
+                    {allUsers.length > 0
+                      ? allUsers.map((user) => (
+                          <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                            <th
+                              scope="row"
+                              className="flex items-center py-4 px-6 text-gray-900 whitespace-nowrap dark:text-white"
+                            >
+                              <FaRegUserCircle className="w-10 text-gray-200 h-10 rounded-full" />
+                              <div className="pl-3">
+                                <div className="text-base font-semibold">
+                                  {user.name}
                                 </div>
-                              );
-                            }}
-                          </Popup>
-                        </span>
-                      </td>
-                    </tr>
-                    <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                      <th
-                        scope="row"
-                        className="flex items-center py-4 px-6 text-gray-900 whitespace-nowrap dark:text-white"
-                      >
-                        <FaRegUserCircle className="w-10 text-gray-200 h-10 rounded-full" />
-                        <div className="pl-3">
-                          <div className="text-base font-semibold">
-                            Neil Sims
-                          </div>
-                        </div>
-                      </th>
-                      <td className="py-4 px-6">neilS123@gmail.com</td>
-                      <td className="py-4 px-6">
-                        123 Parkway Drive, Ontairo N5A 8A8
-                      </td>
-                      <td className="py-4 px-6">Agent</td>
-                      <td className="py-4 px-6">Project 1</td>
-
-                      <td className="py-4 px-6">
-                        <span class="inline-flex -space-x-px overflow-hidden rounded-md border bg-white shadow-sm">
-                          <Popup
-                            trigger={() => (
-                              <button class="inline-block px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:relative">
-                                Delete
-                              </button>
-                            )}
-                            modal
-                          >
-                            {(close) => {
-                              return (
-                                <div class="rounded-lg bg-white p-8 shadow-2xl">
-                                  <h2 class="text-lg font-bold">
-                                    Are you sure you want to delete this client?
-                                  </h2>
-
-                                  <div class="mt-8 flex items-center justify-end text-xs">
-                                    <button
-                                      type="button"
-                                      class="rounded bg-green-50 px-4 py-2 font-medium text-green-600"
-                                    >
-                                      Yes, I'm sure
-                                    </button>
-                                    <button
-                                      type="button"
-                                      onClick={close}
-                                      class="ml-2 rounded bg-gray-50 px-4 py-2 font-medium text-gray-600"
-                                    >
-                                      No, go back
-                                    </button>
-                                  </div>
-                                </div>
-                              );
-                            }}
-                          </Popup>
-                        </span>
-                      </td>
-                    </tr>
-                    <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                      <th
-                        scope="row"
-                        className="flex items-center py-4 px-6 text-gray-900 whitespace-nowrap dark:text-white"
-                      >
-                        <FaRegUserCircle className="w-10 text-gray-200 h-10 rounded-full" />
-                        <div className="pl-3">
-                          <div className="text-base font-semibold">
-                            Neil Sims
-                          </div>
-                        </div>
-                      </th>
-                      <td className="py-4 px-6">neilS123@gmail.com</td>
-                      <td className="py-4 px-6">
-                        123 Parkway Drive, Ontairo N5A 8A8
-                      </td>
-                      <td className="py-4 px-6">Agent</td>
-                      <td className="py-4 px-6">Project 1</td>
-
-                      <td className="py-4 px-6">
-                        <span class="inline-flex -space-x-px overflow-hidden rounded-md border bg-white shadow-sm">
-                          <Popup
-                            trigger={() => (
-                              <button class="inline-block px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:relative">
-                                Delete
-                              </button>
-                            )}
-                            modal
-                          >
-                            {(close) => {
-                              return (
-                                <div class="rounded-lg bg-white p-8 shadow-2xl">
-                                  <h2 class="text-lg font-bold">
-                                    Are you sure you want to delete this client?
-                                  </h2>
-
-                                  <div class="mt-8 flex items-center justify-end text-xs">
-                                    <button
-                                      type="button"
-                                      class="rounded bg-green-50 px-4 py-2 font-medium text-green-600"
-                                    >
-                                      Yes, I'm sure
-                                    </button>
-                                    <button
-                                      type="button"
-                                      onClick={close}
-                                      class="ml-2 rounded bg-gray-50 px-4 py-2 font-medium text-gray-600"
-                                    >
-                                      No, go back
-                                    </button>
-                                  </div>
-                                </div>
-                              );
-                            }}
-                          </Popup>
-                        </span>
-                      </td>
-                    </tr>
-                    <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                      <th
-                        scope="row"
-                        className="flex items-center py-4 px-6 text-gray-900 whitespace-nowrap dark:text-white"
-                      >
-                        <FaRegUserCircle className="w-10 text-gray-200 h-10 rounded-full" />
-                        <div className="pl-3">
-                          <div className="text-base font-semibold">
-                            Neil Sims
-                          </div>
-                        </div>
-                      </th>
-                      <td className="py-4 px-6">neilS123@gmail.com</td>
-                      <td className="py-4 px-6">
-                        123 Parkway Drive, Ontairo N5A 8A8
-                      </td>
-                      <td className="py-4 px-6">Agent</td>
-                      <td className="py-4 px-6">Project 1</td>
-
-                      <td className="py-4 px-6">
-                        <span class="inline-flex -space-x-px overflow-hidden rounded-md border bg-white shadow-sm">
-                          <Popup
-                            trigger={() => (
-                              <button class="inline-block px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:relative">
-                                Delete
-                              </button>
-                            )}
-                            modal
-                          >
-                            {(close) => {
-                              return (
-                                <div class="rounded-lg bg-white p-8 shadow-2xl">
-                                  <h2 class="text-lg font-bold">
-                                    Are you sure you want to delete this client?
-                                  </h2>
-
-                                  <div class="mt-8 flex items-center justify-end text-xs">
-                                    <button
-                                      type="button"
-                                      class="rounded bg-green-50 px-4 py-2 font-medium text-green-600"
-                                    >
-                                      Yes, I'm sure
-                                    </button>
-                                    <button
-                                      type="button"
-                                      onClick={close}
-                                      class="ml-2 rounded bg-gray-50 px-4 py-2 font-medium text-gray-600"
-                                    >
-                                      No, go back
-                                    </button>
-                                  </div>
-                                </div>
-                              );
-                            }}
-                          </Popup>
-                        </span>
-                      </td>
-                    </tr>
-                    <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                      <th
-                        scope="row"
-                        className="flex items-center py-4 px-6 text-gray-900 whitespace-nowrap dark:text-white"
-                      >
-                        <FaRegUserCircle className="w-10 text-gray-200 h-10 rounded-full" />
-                        <div className="pl-3">
-                          <div className="text-base font-semibold">
-                            Neil Sims
-                          </div>
-                        </div>
-                      </th>
-                      <td className="py-4 px-6">neilS123@gmail.com</td>
-                      <td className="py-4 px-6">
-                        123 Parkway Drive, Ontairo N5A 8A8
-                      </td>
-                      <td className="py-4 px-6">Agent</td>
-                      <td className="py-4 px-6">Project 1</td>
-
-                      <td className="py-4 px-6">
-                        <span class="inline-flex -space-x-px overflow-hidden rounded-md border bg-white shadow-sm">
-                          <Popup
-                            trigger={() => (
-                              <button class="inline-block px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:relative">
-                                Delete
-                              </button>
-                            )}
-                            modal
-                          >
-                            {(close) => {
-                              return (
-                                <div class="rounded-lg bg-white p-8 shadow-2xl">
-                                  <h2 class="text-lg font-bold">
-                                    Are you sure you want to delete this client?
-                                  </h2>
-
-                                  <div class="mt-8 flex items-center justify-end text-xs">
-                                    <button
-                                      type="button"
-                                      class="rounded bg-green-50 px-4 py-2 font-medium text-green-600"
-                                    >
-                                      Yes, I'm sure
-                                    </button>
-                                    <button
-                                      type="button"
-                                      onClick={close}
-                                      class="ml-2 rounded bg-gray-50 px-4 py-2 font-medium text-gray-600"
-                                    >
-                                      No, go back
-                                    </button>
-                                  </div>
-                                </div>
-                              );
-                            }}
-                          </Popup>
-                        </span>
-                      </td>
-                    </tr>
-                    <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                      <th
-                        scope="row"
-                        className="flex items-center py-4 px-6 text-gray-900 whitespace-nowrap dark:text-white"
-                      >
-                        <FaRegUserCircle className="w-10 text-gray-200 h-10 rounded-full" />
-                        <div className="pl-3">
-                          <div className="text-base font-semibold">
-                            Neil Sims
-                          </div>
-                        </div>
-                      </th>
-                      <td className="py-4 px-6">neilS123@gmail.com</td>
-                      <td className="py-4 px-6">
-                        123 Parkway Drive, Ontairo N5A 8A8
-                      </td>
-                      <td className="py-4 px-6">Agent</td>
-                      <td className="py-4 px-6">Project 1</td>
-
-                      <td className="py-4 px-6">
-                        <span class="inline-flex -space-x-px overflow-hidden rounded-md border bg-white shadow-sm">
-                          <Popup
-                            trigger={() => (
-                              <button class="inline-block px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:relative">
-                                Delete
-                              </button>
-                            )}
-                            modal
-                          >
-                            {(close) => {
-                              return (
-                                <div class="rounded-lg bg-white p-8 shadow-2xl">
-                                  <h2 class="text-lg font-bold">
-                                    Are you sure you want to delete this client?
-                                  </h2>
-
-                                  <div class="mt-8 flex items-center justify-end text-xs">
-                                    <button
-                                      type="button"
-                                      class="rounded bg-green-50 px-4 py-2 font-medium text-green-600"
-                                    >
-                                      Yes, I'm sure
-                                    </button>
-                                    <button
-                                      type="button"
-                                      onClick={close}
-                                      class="ml-2 rounded bg-gray-50 px-4 py-2 font-medium text-gray-600"
-                                    >
-                                      No, go back
-                                    </button>
-                                  </div>
-                                </div>
-                              );
-                            }}
-                          </Popup>
-                        </span>
-                      </td>
-                    </tr>
-                    <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                      <th
-                        scope="row"
-                        className="flex items-center py-4 px-6 text-gray-900 whitespace-nowrap dark:text-white"
-                      >
-                        <FaRegUserCircle className="w-10 text-gray-200 h-10 rounded-full" />
-                        <div className="pl-3">
-                          <div className="text-base font-semibold">
-                            Neil Sims
-                          </div>
-                        </div>
-                      </th>
-                      <td className="py-4 px-6">neilS123@gmail.com</td>
-                      <td className="py-4 px-6">
-                        123 Parkway Drive, Ontairo N5A 8A8
-                      </td>
-                      <td className="py-4 px-6">Agent</td>
-                      <td className="py-4 px-6">Project 1</td>
-
-                      <td className="py-4 px-6">
-                        <span class="inline-flex -space-x-px overflow-hidden rounded-md border bg-white shadow-sm">
-                          <Popup
-                            trigger={() => (
-                              <button class="inline-block px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:relative">
-                                Delete
-                              </button>
-                            )}
-                            modal
-                          >
-                            {(close) => {
-                              return (
-                                <div class="rounded-lg bg-white p-8 shadow-2xl">
-                                  <h2 class="text-lg font-bold">
-                                    Are you sure you want to delete this client?
-                                  </h2>
-
-                                  <div class="mt-8 flex items-center justify-end text-xs">
-                                    <button
-                                      type="button"
-                                      class="rounded bg-green-50 px-4 py-2 font-medium text-green-600"
-                                    >
-                                      Yes, I'm sure
-                                    </button>
-                                    <button
-                                      type="button"
-                                      onClick={close}
-                                      class="ml-2 rounded bg-gray-50 px-4 py-2 font-medium text-gray-600"
-                                    >
-                                      No, go back
-                                    </button>
-                                  </div>
-                                </div>
-                              );
-                            }}
-                          </Popup>
-                        </span>
-                      </td>
-                    </tr>
+                              </div>
+                            </th>
+                            <td className="py-4 px-6">{user.email}</td>
+                            <td className="py-4 px-6">{user.address}</td>
+                            <td className="py-4 px-6">{user.role}</td>
+                            <td className="py-4 px-6">{user.assigedProject}</td>
+                            <td className="py-4 px-6">
+                              <span class="inline-flex -space-x-px overflow-hidden rounded-md border bg-white shadow-sm">
+                                <DeletePop userIID={user.id} assProject={user.assigedProject}/>
+                              </span>
+                            </td>
+                          </tr>
+                        ))
+                      : null}
                   </tbody>
                 </table>
               </div>

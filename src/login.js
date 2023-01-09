@@ -1,41 +1,58 @@
 import React, { useState } from "react";
-import Cosmo from "./Brokerage/img/black.png";
+import HomeVideo from "./Brokerage/img/homeVideo.mp4";
 import { useNavigate } from "react-router-dom";
 import Popup from "reactjs-popup";
 import { toast } from "react-toastify";
 import { UserAuth } from "./Brokerage/AuthContextProvider";
+import Cosmo from './Brokerage/img/clear.png';
+
 
 function Login() {
   const [email, setEmail] = useState(null);
   const [password, setPassword] = useState(null);
   const [newEmail, setNewEmail] = useState(null);
   const [newPassword, setNewPassword] = useState(null);
+  const [name, setName] = useState(null);
   const navigate = useNavigate();
   const { signup, login } = UserAuth();
+  
 
+  
   async function signupFunc() {
     try {
-      await signup(newEmail, newPassword);
-      navigate("/project");
-
+      if (name) {
+        await signup(newEmail, newPassword, name);
+        navigate("/project");
+      } else {
+        toast.error("Enter a Name", {
+          position: "top-right",
+          autoClose: 4581,
+          hideProgressBar: true,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        });
+      }
     } catch (err) {
-     toast.error(err.message, {
-       position: "top-right",
-       autoClose: 4581,
-       hideProgressBar: true,
-       closeOnClick: true,
-       pauseOnHover: true,
-       draggable: true,
-       progress: undefined,
-       theme: "dark",
-     });
+      toast.error(err.message, {
+        position: "top-right",
+        autoClose: 4581,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
     }
   }
 
   async function loginFunc() {
     try {
-      await login(email, password)
-      navigate("/project");
+      await login(email, password);
+      // navigate("/project");
     } catch (err) {
       toast.error(err.message, {
         position: "top-right",
@@ -54,7 +71,9 @@ function Login() {
     <div className="oeiwfhweiof">
       <div className="lg:flex">
         <div className="lg:w-1/2 xl:max-w-screen-sm">
-          <div className="py-12  flex justify-center lg:justify-start lg:px-12"></div>
+          <div className=" ewegergregrgrege flex justify-end lg:justify-start lg:px-12">
+            <img src={Cosmo} className='ehfehiefhu' />
+          </div>
           <div className="mt-10 px-12 sm:px-24 md:px-48 lg:px-12 lg:mt-16 xl:px-24 xl:max-w-2xl">
             <h2
               className="text-center text-4xl text-white font-display font-semibold lg:text-left xl:text-5xl
@@ -152,6 +171,9 @@ function Login() {
                                 <input
                                   type="text"
                                   required
+                                  onChange={(event) =>
+                                    setName(event.target.value)
+                                  }
                                   id="defaulxt-input"
                                   class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                 ></input>
@@ -196,13 +218,27 @@ function Login() {
                   }}
                 </Popup>
               </div>
+              <div className="w-full flex justify-center mt-8 mb-8">
+                <a href="http://brokerageforbuilders.com/">
+                  <button class="relative inline-flex items-center justify-center p-0.5 mb-2 mr-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-purple-600 to-blue-500 group-hover:from-purple-600 group-hover:to-blue-500 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800">
+                    <span class="relative px-5 py-2.5 transition-all ease-in duration-75 bg-white dark:bg-gray-900 rounded-md group-hover:bg-opacity-0">
+                      Brokerage For Builders
+                    </span>
+                  </button>
+                </a>
+                <a href="https://www.cosmorealty.ca/">
+                  <button class="relative inline-flex items-center justify-center p-0.5 mb-2 mr-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-green-400 to-blue-600 group-hover:from-green-400 group-hover:to-blue-600 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-green-200 dark:focus:ring-green-800">
+                    <span class="relative px-5 py-2.5 transition-all ease-in duration-75 bg-white dark:bg-gray-900 rounded-md group-hover:bg-opacity-0">
+                      Cosmopolitan Realty
+                    </span>
+                  </button>
+                </a>
+              </div>
             </div>
           </div>
         </div>
-        <div className=" lg:flex items-center justify-center bg-black flex-1 h-screen">
-          <div className="max-w-xs transform duration-200 hover:scale-110 cursor-pointer">
-            <img src={Cosmo} className="w-5/6 ewrfewrfewfwe mx-auto" />
-          </div>
+        <div className="bg-black h-screen">
+          <video src={HomeVideo} autoPlay loop muted />
         </div>
       </div>
     </div>
