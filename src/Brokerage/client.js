@@ -20,6 +20,8 @@ import {
 } from "firebase/firestore";
 import { db, storage } from "../firebase-config";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { motion } from "framer-motion";
+
 
 function DeletePop(docid) {
   const { id, pid } = useParams();
@@ -62,7 +64,22 @@ function DeletePop(docid) {
     >
       {(close) => {
         return (
-          <div class="rounded-lg bg-gray-700 p-8 shadow-2xl">
+          <motion.div
+            variants={{
+              hidden: {
+                y: -800,
+              },
+              visible: {
+                y: 0,
+                transition: {
+                  duration: 0.5,
+                },
+              },
+            }}
+            initial="hidden"
+            animate="visible"
+            class="rounded-lg bg-gray-700 p-8 shadow-2xl"
+          >
             <h2 class="text-lg font-bold text-gray-200">
               Are you sure you want to delete this client?
             </h2>
@@ -83,7 +100,7 @@ function DeletePop(docid) {
                 No, go back
               </button>
             </div>
-          </div>
+          </motion.div>
         );
       }}
     </Popup>
@@ -210,6 +227,7 @@ function Client() {
   }
 
   useEffect(() => {
+    window.scrollTo(0, 0);
     async function getClient() {
       const docSnap = await getDoc(clientDocumentRef);
       setClientData(docSnap.data());
@@ -375,7 +393,22 @@ function Client() {
           </div>
         </div>
       </div>
-      <div className="view-project-container">
+      <motion.div
+        variants={{
+          hidden: {
+            y: 800,
+          },
+          visible: {
+            y: 0,
+            transition: {
+              duration: 0.9,
+            },
+          },
+        }}
+        initial="hidden"
+        animate="visible"
+        className="view-project-container"
+      >
         <div className="view-project-head-gduiuewfguewifgeif">
           <h1 className="view-project-head-tiewewft">
             {clientData ? clientData.name : "Client"}
@@ -482,7 +515,22 @@ function Client() {
                   )}
                 </div>
               </div>
-              <div className="bg-gray-700 shadow p-8 rounded ">
+              <motion.div
+                variants={{
+                  hidden: {
+                    opacity: 0,
+                  },
+                  visible: {
+                    opacity: 1,
+                    transition: {
+                      duration: 0.9,
+                    },
+                  },
+                }}
+                initial="hidden"
+                animate="visible"
+                className="bg-gray-700 shadow p-8 rounded "
+              >
                 <ol class="items-center justify-center sm:flex">
                   <li class="relative mb-6 sm:mb-0">
                     <div class="flex items-center">
@@ -566,7 +614,7 @@ function Client() {
                     </div>
                   </li>
                 </ol>
-              </div>
+              </motion.div>
               <div className="bg-gray-800 shadow px-4 py-5 sm:grid sm:grid-cols-1 sm:gap-4 sm:px-6">
                 <dt className="text-sm font-medium text-white opacity-70">
                   Status Comments
@@ -621,7 +669,22 @@ function Client() {
                 >
                   {(close) => {
                     return (
-                      <div className="ewiohfwoeifhewoi">
+                      <motion.div
+                        variants={{
+                          hidden: {
+                            y: -800,
+                          },
+                          visible: {
+                            y: 0,
+                            transition: {
+                              duration: 0.9,
+                            },
+                          },
+                        }}
+                        initial="hidden"
+                        animate="visible"
+                        className="ewiohfwoeifhewoi"
+                      >
                         <div
                           id="editUserModal"
                           tabIndex={-1}
@@ -698,7 +761,7 @@ function Client() {
                             </div>
                           </div>
                         </div>
-                      </div>
+                      </motion.div>
                     );
                   }}
                 </Popup>
@@ -722,7 +785,22 @@ function Client() {
                 <tbody>
                   {listClientDoc
                     ? listClientDoc.map((document) => (
-                        <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                        <motion.tr
+                          variants={{
+                            hidden: {
+                              y: -800,
+                            },
+                            visible: {
+                              y: 0,
+                              transition: {
+                                duration: 0.9,
+                              },
+                            },
+                          }}
+                          initial="hidden"
+                          animate="visible"
+                          className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
+                        >
                           <th
                             scope="row"
                             className="flex items-center py-4 px-6 text-gray-900 whitespace-nowrap dark:text-white"
@@ -747,7 +825,7 @@ function Client() {
                               <DeletePop docid={document.id} />
                             </span>
                           </td>
-                        </tr>
+                        </motion.tr>
                       ))
                     : null}
                 </tbody>
@@ -755,7 +833,7 @@ function Client() {
             </div>
           </div>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 }

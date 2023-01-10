@@ -8,6 +8,8 @@ import { BsHouseDoorFill } from "react-icons/bs";
 import { FaRegUserCircle } from "react-icons/fa";
 import { getDocs, collection, addDoc } from "firebase/firestore";
 import { db } from "../firebase-config";
+import { motion } from "framer-motion";
+
 
 function NewUser() {
   const [products, setProjects] = useState(true);
@@ -276,7 +278,22 @@ function NewUser() {
           {/* <h1 className="view-project-head-butt">Edit</h1> */}
         </div>
 
-        <div className="project-details-contststs">
+        <motion.div
+          variants={{
+            hidden: {
+              x: 800,
+            },
+            visible: {
+              x: 0,
+              transition: {
+                duration: 0.9,
+              },
+            },
+          }}
+          initial="hidden"
+          animate="visible"
+          className="project-details-contststs"
+        >
           <div className="coiowejiewje">
             <div className="project-details-left-shssdd">
               <div className="bg-gray-800 shadow-xl  shadow sm:rounded-lg">
@@ -424,7 +441,7 @@ function NewUser() {
               </div>
             </div>
           </div>
-        </div>
+        </motion.div>
       </div>
     </div>
   );

@@ -94,8 +94,12 @@ export const AuthContextProvider = ({ children }) => {
   useEffect(() => {
     window.scrollTo(0, 0);
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUserId(currentUser.uid);
-      setUser(currentUser);
+      if(currentUser){
+              setUserId(currentUser.uid);
+              setUser(currentUser);
+      } else {
+        navigate('/');
+      }
     });
     return () => {
       unsubscribe();

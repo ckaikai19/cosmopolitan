@@ -8,11 +8,9 @@ import Popup from "reactjs-popup";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { UserAuth } from "./AuthContextProvider";
 import { toast } from "react-toastify";
-
 import Logo from "./img/logo.png";
 import { BsHouseDoorFill } from "react-icons/bs";
 import { FaRegUserCircle } from "react-icons/fa";
-
 import {
   doc,
   getDoc,
@@ -21,6 +19,7 @@ import {
   deleteDoc,
 } from "firebase/firestore";
 import { db } from "../firebase-config";
+import { motion } from "framer-motion";
 
 function DeletePop(docid) {
   const { id } = useParams();
@@ -61,7 +60,22 @@ function DeletePop(docid) {
     >
       {(close) => {
         return (
-          <div class="rounded-lg bg-gray-700 p-8 shadow-2xl">
+          <motion.div
+            variants={{
+              hidden: {
+                y: -800,
+              },
+              visible: {
+                y: 0,
+                transition: {
+                  duration: 0.9,
+                },
+              },
+            }}
+            initial="hidden"
+            animate="visible"
+            class="rounded-lg bg-gray-700 p-8 shadow-2xl"
+          >
             <h2 class="text-lg font-bold text-gray-200">
               Are you sure you want to delete this client?
             </h2>
@@ -82,7 +96,7 @@ function DeletePop(docid) {
                 No, go back
               </button>
             </div>
-          </div>
+          </motion.div>
         );
       }}
     </Popup>
@@ -129,7 +143,22 @@ function DeleteProject() {
     >
       {(close) => {
         return (
-          <div class="rounded-lg bg-gray-700 p-8 shadow-2xl">
+          <motion.div
+            variants={{
+              hidden: {
+                y: -800,
+              },
+              visible: {
+                y: 0,
+                transition: {
+                  duration: 0.5,
+                },
+              },
+            }}
+            initial="hidden"
+            animate="visible"
+            class="rounded-lg bg-gray-700 p-8 shadow-2xl"
+          >
             <h2 class="text-lg font-bold text-gray-200">
               Are you sure you want to delete this project?
             </h2>
@@ -150,7 +179,7 @@ function DeleteProject() {
                 No, go back
               </button>
             </div>
-          </div>
+          </motion.div>
         );
       }}
     </Popup>
@@ -379,7 +408,22 @@ function ProjectDetails() {
         </div>
 
         <div className="project-details-contststs">
-          <div className="coiowejiewje">
+          <motion.div
+            variants={{
+              hidden: {
+                y: 800,
+              },
+              visible: {
+                y: 0,
+                transition: {
+                  duration: 0.9,
+                },
+              },
+            }}
+            initial="hidden"
+            animate="visible"
+            className="coiowejiewje"
+          >
             <div className="project-details-left-shssdd">
               <div className="bg-gray-800 shadow-xl  shadow sm:rounded-lg">
                 <div className="px-4 shadow flex justify-between bg-gray-800 py-5 rounded sm:px-6">
@@ -874,7 +918,7 @@ function ProjectDetails() {
                 </div>
               </div>
             </div>
-          </div>
+          </motion.div>
         </div>
       </div>
     </div>

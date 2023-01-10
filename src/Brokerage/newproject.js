@@ -8,11 +8,11 @@ import { toast } from "react-toastify";
 import Logo from "./img/logo.png";
 import { BsHouseDoorFill } from "react-icons/bs";
 import { FaRegUserCircle } from "react-icons/fa";
-
 import { db, storage } from "../firebase-config";
 import { collection, addDoc } from "firebase/firestore";
-
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { motion } from "framer-motion";
+
 
 function NewProject() {
   const [products, setProjects] = useState(true);
@@ -272,7 +272,22 @@ function NewProject() {
         </div>
 
         <div className="project-details-contststs">
-          <div className="coiowejiewje">
+          <motion.div
+            variants={{
+              hidden: {
+                x: 800,
+              },
+              visible: {
+                x: 0,
+                transition: {
+                  duration: 0.9,
+                },
+              },
+            }}
+            initial="hidden"
+            animate="visible"
+            className="coiowejiewje"
+          >
             <div className="project-details-left-shssdd">
               <div className="bg-gray-800 shadow-xl  shadow sm:rounded-lg">
                 <div className="px-4 bg-gray-700 shadow flex justify-between bg-gray-800 py-5 rounded sm:px-6">
@@ -286,13 +301,26 @@ function NewProject() {
                   </div>
                   <div>
                     <div>
-                      <button
+                      <motion.button
                         type="button"
                         onClick={() => AddProject()}
+                        variants={{
+                          hidden: {
+                            scale: 0,
+                          },
+                          visible: {
+                            scale: 1,
+                            transition: {
+                              duration: 0.9,
+                            },
+                          },
+                        }}
+                        initial="hidden"
+                        animate="visible"
                         class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
                       >
                         Create Project
-                      </button>
+                      </motion.button>
                     </div>
                   </div>
                 </div>
@@ -354,10 +382,14 @@ function NewProject() {
                         class="bg-gray-50 border border-gray-300 text-gray-900 mb-6 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                       >
                         <option selected>Select a Property Type</option>
-                        <option value="Single-family home">Single-family homes</option>
+                        <option value="Single-family home">
+                          Single-family homes
+                        </option>
                         <option value="Condo">Condos</option>
                         <option value="Townhome">Townhome</option>
-                        <option value="Commercial property">Commercial property</option>
+                        <option value="Commercial property">
+                          Commercial property
+                        </option>
                       </select>
                     </div>
                     <div className=" px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
@@ -462,7 +494,7 @@ function NewProject() {
                 </div>
               </div>
             </div>
-          </div>
+          </motion.div>
         </div>
       </div>
     </div>

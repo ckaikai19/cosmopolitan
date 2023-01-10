@@ -5,6 +5,8 @@ import Popup from "reactjs-popup";
 import { toast } from "react-toastify";
 import { UserAuth } from "./Brokerage/AuthContextProvider";
 import Cosmo from './Brokerage/img/clear.png';
+import { motion } from "framer-motion";
+
 
 
 function Login() {
@@ -70,9 +72,24 @@ function Login() {
   return (
     <div className="oeiwfhweiof">
       <div className="lg:flex">
-        <div className="lg:w-1/2 xl:max-w-screen-sm">
+        <motion.div
+          variants={{
+            hidden: {
+              x: -800,
+            },
+            visible: {
+              x: 0,
+              transition: {
+                duration: 0.9,
+              },
+            },
+          }}
+          initial="hidden"
+          animate="visible"
+          className="lg:w-1/2 xl:max-w-screen-sm"
+        >
           <div className=" ewegergregrgrege flex justify-end lg:justify-start lg:px-12">
-            <img src={Cosmo} className='ehfehiefhu' />
+            <img src={Cosmo} className="ehfehiefhu" />
           </div>
           <div className="mt-10 px-12 sm:px-24 md:px-48 lg:px-12 lg:mt-16 xl:px-24 xl:max-w-2xl">
             <h2
@@ -236,10 +253,22 @@ function Login() {
               </div>
             </div>
           </div>
-        </div>
-        <div className="bg-black h-screen">
+        </motion.div>
+        <motion.div variants={{
+            hidden: {
+              x: 800,
+            },
+            visible: {
+              x: 0,
+              transition: {
+                duration: 0.9,
+              },
+            },
+          }}
+          initial="hidden"
+          animate="visible" className="bg-black h-screen">
           <video src={HomeVideo} autoPlay loop muted />
-        </div>
+        </motion.div>
       </div>
     </div>
   );

@@ -15,6 +15,9 @@ import {
   deleteDoc,
 } from "firebase/firestore";
 import { db } from "../firebase-config";
+import { motion } from "framer-motion";
+
+
 
 function DeletePop({userIID, assProject}) {
   const navigate = useNavigate();
@@ -56,7 +59,22 @@ function DeletePop({userIID, assProject}) {
     >
       {(close) => {
         return (
-          <div class="rounded-lg bg-gray-700 p-8 shadow-2xl">
+          <motion.div
+            variants={{
+              hidden: {
+                y: -800,
+              },
+              visible: {
+                y: 0,
+                transition: {
+                  duration: 0.5,
+                },
+              },
+            }}
+            initial="hidden"
+            animate="visible"
+            class="rounded-lg bg-gray-700 p-8 shadow-2xl"
+          >
             <h2 class="text-lg font-bold text-gray-200">
               Are you sure you want to delete this client?
             </h2>
@@ -77,7 +95,7 @@ function DeletePop({userIID, assProject}) {
                 No, go back
               </button>
             </div>
-          </div>
+          </motion.div>
         );
       }}
     </Popup>
@@ -110,6 +128,7 @@ function AllUser() {
   }
 
   useEffect(() => {
+    window.scrollTo(0, 0);
     async function getClients() {
       let projectsArr = [];
       let usersArr = [];
@@ -339,7 +358,22 @@ function AllUser() {
                   <tbody>
                     {allUsers.length > 0
                       ? allUsers.map((user) => (
-                          <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                          <motion.tr
+                            variants={{
+                              hidden: {
+                                y: -800,
+                              },
+                              visible: {
+                                y: 0,
+                                transition: {
+                                  duration: 0.9,
+                                },
+                              },
+                            }}
+                            initial="hidden"
+                            animate="visible"
+                            className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
+                          >
                             <th
                               scope="row"
                               className="flex items-center py-4 px-6 text-gray-900 whitespace-nowrap dark:text-white"
@@ -357,10 +391,13 @@ function AllUser() {
                             <td className="py-4 px-6">{user.assigedProject}</td>
                             <td className="py-4 px-6">
                               <span class="inline-flex -space-x-px overflow-hidden rounded-md border bg-white shadow-sm">
-                                <DeletePop userIID={user.id} assProject={user.assigedProject}/>
+                                <DeletePop
+                                  userIID={user.id}
+                                  assProject={user.assigedProject}
+                                />
                               </span>
                             </td>
-                          </tr>
+                          </motion.tr>
                         ))
                       : null}
                   </tbody>

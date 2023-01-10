@@ -10,6 +10,8 @@ import { toast } from "react-toastify";
 
 import { getDocs, collection} from "firebase/firestore";
 import { db } from "../firebase-config";
+import { motion } from "framer-motion";
+
 
 
 function Project() {
@@ -53,8 +55,6 @@ function Project() {
 
     getProjects();
   }, [])
-
-  // console.log(allProjects)
 
 
   return (
@@ -205,19 +205,51 @@ function Project() {
         <div className="view-project-head-gduiuewfguewifgeif">
           <h1 className="view-project-head-tiewewft">All Projects</h1>
           <Link to={"/newproject"}>
-            <button
+            <motion.button
+              variants={{
+                hidden: {
+                  scale: 0,
+                  opacity: 0,
+                },
+                visible: {
+                  scale: 1,
+                  opacity: 1,
+                  transition: {
+                    duration: 0.9,
+                  },
+                },
+              }}
+              initial="hidden"
+              animate="visible"
               type="button"
               class="py-3 px-5 mr-8 text-base font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
             >
               Add New +
-            </button>
+            </motion.button>
           </Link>
         </div>
         <div className="i3hfeoihfoiefho">
           <div className="view-project-body orgjrtopjgrpogjrpojrpojrtop">
             {allProjects.length > 0 ? (
               allProjects.map((project) => (
-                <div className="iojuioijoefwijo mr-5 mt-5 bg-white border border-gray-200 rounded-lg shadow-md dark:bg-gray-800 dark:border-gray-700">
+                <motion.div
+                  variants={{
+                    hidden: {
+                      y: -800,
+                      opacity: 0,
+                    },
+                    visible: {
+                      y: 0,
+                      opacity: 1,
+                      transition: {
+                        duration: 0.9,
+                      },
+                    },
+                  }}
+                  initial="hidden"
+                  animate="visible"
+                  className="iojuioijoefwijo mr-5 mt-5 bg-white border border-gray-200 rounded-lg shadow-md dark:bg-gray-800 dark:border-gray-700"
+                >
                   <a href="#">
                     <img
                       className="w-full erreergerggr rounded-t-lg"
@@ -254,7 +286,7 @@ function Project() {
                       </svg>
                     </Link>
                   </div>
-                </div>
+                </motion.div>
               ))
             ) : (
               <div className="ioewioeieoiooij">
